@@ -26,7 +26,7 @@ final class PageRequest extends \Inttegro\DomainValue
     /** @param array{page_number: int, page_size?: int|null} $data */
     public function __construct(array $data)
     {
-        $this->pageNumber = \Inttegro\ValueHydrator::int($data['page_number'] ?? null, false);
+        $this->pageNumber = \Inttegro\ValueHydrator::int($data['page_number'], false);
         $this->pageSize = \Inttegro\ValueHydrator::int($data['page_size'] ?? null, true);
     }
 

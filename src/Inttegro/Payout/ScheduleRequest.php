@@ -51,10 +51,10 @@ final class ScheduleRequest extends \Inttegro\DomainValue
      */
     public function __construct(array $data)
     {
-        $this->destinationId = \Inttegro\ValueHydrator::string($data['destination_id'] ?? null, false);
+        $this->destinationId = \Inttegro\ValueHydrator::string($data['destination_id'], false);
         $this->executeAfter = \Inttegro\ValueHydrator::dateTime($data['execute_after'] ?? null, true);
         $this->maxAmount = \Inttegro\ValueHydrator::int($data['max_amount'] ?? null, true);
-        $this->reference = \Inttegro\ValueHydrator::string($data['reference'] ?? null, false);
+        $this->reference = \Inttegro\ValueHydrator::string($data['reference'], false);
     }
 
     /** @param array<string, mixed> $data */
