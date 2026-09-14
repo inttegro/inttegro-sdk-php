@@ -20,6 +20,8 @@ final class Refund extends \Inttegro\DomainValue
     /**
      * Omitted unless a reason was supplied when the refund was canceled.
      *
+     * Optional response field. PHP type: `string|null`; wire field: `cancel_reason` (`string`).
+     *
      * @var string|null
      */
     public readonly ?string $cancelReason;
@@ -99,6 +101,8 @@ final class Refund extends \Inttegro\DomainValue
 
     /**
      * Total amount of the originating order captured when the refund was created.
+     *
+     * Optional response field. PHP type: `Amount|null`; wire field: `order_amount` (`object`).
      *
      * @var Amount|null
      */
