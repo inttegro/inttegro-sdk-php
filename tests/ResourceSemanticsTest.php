@@ -6,6 +6,7 @@ use Inttegro\PaymentMethod\PaymentMethod;
 use Inttegro\Product\Product;
 use Inttegro\PurchaseIntent\PurchaseIntent;
 use Inttegro\Refund\FailureReason;
+use Inttegro\Refund\PaymentMethodSettlement;
 use Inttegro\Refund\Refund;
 use PHPUnit\Framework\TestCase;
 
@@ -24,11 +25,25 @@ final class ResourceSemanticsTest extends TestCase
             'line_items' => [],
             'order_id' => 'or_123',
             'reason' => 'item_returned',
+            'settlement' => [
+                'type' => 'payment_method',
+                'payment_method' => [
+                    'id' => 'pm_123',
+                    'type' => 'mobile_money',
+                    'mobile_money' => [
+                        'network' => 'mtn',
+                        'account_number' => '****7831',
+                        'last4' => '7831',
+                    ],
+                ],
+            ],
             'status' => 'failed',
             'total' => ['currency' => 'ghs', 'value' => 100],
         ]);
 
         self::assertSame(FailureReason::Unknown, $refund->failure?->reason);
+        self::assertInstanceOf(PaymentMethodSettlement::class, $refund->settlement);
+        self::assertSame('****7831', $refund->settlement->paymentMethod->mobileMoney->accountNumber);
         self::assertFalse($refund->failure?->retryable);
         self::assertSame('unknown', $refund->toArray()['failure']['reason']);
     }

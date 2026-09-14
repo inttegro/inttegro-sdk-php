@@ -150,6 +150,9 @@ final class Refund extends \Inttegro\DomainValue
      */
     public readonly ?string $reference;
 
+    /** Immutable destination selected by its required type discriminator. Wire field: `settlement`. */
+    public readonly OfflineSettlement|PaymentMethodSettlement $settlement;
+
     /**
      * Current lifecycle state.
      *
@@ -201,6 +204,12 @@ final class Refund extends \Inttegro\DomainValue
         $this->reason = \Inttegro\ValueHydrator::object($data['reason'] ?? null, [\Inttegro\GenericValue::class], false);
         $this->reasonDetails = \Inttegro\ValueHydrator::string($data['reason_details'] ?? null, true);
         $this->reference = \Inttegro\ValueHydrator::string($data['reference'] ?? null, true);
+        $settlement = \Inttegro\ValueHydrator::array($data['settlement'] ?? null, false);
+        $this->settlement = match ($settlement['type'] ?? null) {
+            'offline' => OfflineSettlement::fromArray($settlement),
+            'payment_method' => PaymentMethodSettlement::fromArray($settlement),
+            default => throw new \InvalidArgumentException('Unsupported refund settlement type.'),
+        };
         $this->status = \Inttegro\ValueHydrator::string($data['status'] ?? null, false);
         $this->succeededAt = \Inttegro\ValueHydrator::dateTime($data['succeeded_at'] ?? null, true);
         $this->total = \Inttegro\ValueHydrator::object($data['total'] ?? null, [Amount::class], false);

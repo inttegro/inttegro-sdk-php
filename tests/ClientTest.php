@@ -414,6 +414,7 @@ final class ClientTest extends TestCase
                 '/refunds/create' => ['refund' => [
                     'id' => 'rf_1',
                     'status' => 'pending',
+                    'settlement' => ['type' => 'offline'],
                     'created_at' => '2026-09-10T10:00:00Z',
                 ]],
                 '/orders/send_invoice' => [
@@ -561,9 +562,15 @@ final class ClientTest extends TestCase
             $requests[] = compact('method', 'url', 'headers', 'payload');
             $path = parse_url($url, PHP_URL_PATH) ?: '';
             $body = match ($path) {
-                '/refunds/create' => ['refund' => [
+                '/refunds/create', '/refunds/cancel', '/refunds/lookup' => ['refund' => [
                     'id' => 'rf_1',
+                    'settlement' => ['type' => 'offline'],
                     'created_at' => '2026-09-10T10:00:00Z',
+                ]],
+                '/refunds/page' => ['page' => [
+                    'number' => 1,
+                    'refunds' => [],
+                    'size' => 0,
                 ]],
                 '/orders/page' => ['page' => ['number' => 0, 'size' => 0, 'orders' => []]],
                 '/orders/send_invoice', '/orders/send_receipt' => [
