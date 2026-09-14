@@ -17,12 +17,12 @@ final class SettingsLookup extends \Inttegro\DomainValue
     /**
      * Currency-to-financial-account destination assignments.
      *
-     * Required response field. PHP type: `array<string, string>`; wire field: `destinations`
-     * (`object`).
+     * Required response field. PHP type: `\Inttegro\Payout\Destinations`; wire field:
+     * `destinations` (`object`).
      *
-     * @var array<string, string>
+     * @var \Inttegro\Payout\Destinations
      */
-    public readonly array $destinations;
+    public readonly \Inttegro\Payout\Destinations $destinations;
 
     /**
      * Present only when foreign exchange is enabled in stored settings.
@@ -50,7 +50,7 @@ final class SettingsLookup extends \Inttegro\DomainValue
      */
     public function __construct(array $data)
     {
-        $this->destinations = \Inttegro\ValueHydrator::array($data['destinations'] ?? null, false);
+        $this->destinations = \Inttegro\ValueHydrator::object($data['destinations'] ?? null, [\Inttegro\Payout\Destinations::class], false);
         $this->fxEnabled = \Inttegro\ValueHydrator::bool($data['fx_enabled'] ?? null, true);
         $this->schedule = \Inttegro\ValueHydrator::object($data['schedule'] ?? null, [\Inttegro\Payout\SettingsLookupSchedule::class], true);
     }
