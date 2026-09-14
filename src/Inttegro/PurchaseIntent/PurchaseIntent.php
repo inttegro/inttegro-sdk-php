@@ -5,8 +5,7 @@ namespace Inttegro\PurchaseIntent;
 use DateTimeImmutable;
 
 /**
- * A shareable purchase intent that captures product, price, quantity, variants, usage, and buyer
- * activity.
+ * A shareable purchase intent that captures product, price, quantity, variants, and usage.
  *
  * This immutable value hydrates decoded API `snake_case` data into typed `camelCase` properties.
  * Use `fromArray()` for wire data; `toArray()`, array access, and JSON serialization expose the API
@@ -16,16 +15,6 @@ use DateTimeImmutable;
  */
 final class PurchaseIntent extends \Inttegro\DomainValue
 {
-    /**
-     * Recent authenticated-owner activity for the purchase intent.
-     *
-     * Optional response field. PHP type: `\Inttegro\PurchaseIntent\ActivityLog|null`; wire field:
-     * `activity` (`object`).
-     *
-     * @var \Inttegro\PurchaseIntent\ActivityLog|null
-     */
-    public readonly ?\Inttegro\PurchaseIntent\ActivityLog $activity;
-
     /**
      * Whether the intent was configured with a variant set.
      *
@@ -170,7 +159,6 @@ final class PurchaseIntent extends \Inttegro\DomainValue
      */
     public function __construct(array $data)
     {
-        $this->activity = \Inttegro\ValueHydrator::object($data['activity'] ?? null, [\Inttegro\PurchaseIntent\ActivityLog::class], true);
         $this->allowVariants = \Inttegro\ValueHydrator::bool($data['allow_variants'] ?? null, false);
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
         $this->expiresAt = \Inttegro\ValueHydrator::dateTime($data['expires_at'] ?? null, true);

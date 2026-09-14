@@ -47,12 +47,17 @@ class Refunds
      *
      * @param string $refundId Unique identifier of the refund.
      * @param ?string $idempotencyKey Optional idempotency key for safely retrying the same logical write.
+     * @param ?string $reason Optional explanation for canceling the refund.
      * @return \Inttegro\Refund\Refund The canceled refund.
      */
-    public function cancel(string $refundId, ?string $idempotencyKey = null): \Inttegro\Refund\Refund
+    public function cancel(string $refundId, ?string $idempotencyKey = null, ?string $reason = null): \Inttegro\Refund\Refund
     {
+        $payload = ['refund_id' => $refundId];
+        if ($reason !== null) {
+            $payload['reason'] = $reason;
+        }
         return $this->http->postResource('/refunds/cancel', \Inttegro\Refund\Refund::class, 'refund',
-            ['refund_id' => $refundId],
+            $payload,
             $this->idempotencyHeaders($idempotencyKey)
         );
     }

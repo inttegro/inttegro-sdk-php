@@ -18,6 +18,15 @@ use Inttegro\Money\Amount;
 final class Refund extends \Inttegro\DomainValue
 {
     /**
+     * Omitted unless a reason was supplied when the refund was canceled.
+     *
+     * Optional response field. PHP type: `string|null`; wire field: `cancel_reason` (`string`).
+     *
+     * @var string|null
+     */
+    public readonly ?string $cancelReason;
+
+    /**
      * Omitted unless the refund was canceled before processing began.
      *
      * Optional response field. PHP type: `DateTimeImmutable|null`; wire field: `canceled_at`
@@ -89,6 +98,15 @@ final class Refund extends \Inttegro\DomainValue
      * @var string
      */
     public readonly string $orderId;
+
+    /**
+     * Total amount of the originating order captured when the refund was created.
+     *
+     * Optional response field. PHP type: `Amount|null`; wire field: `order_amount` (`object`).
+     *
+     * @var Amount|null
+     */
+    public readonly ?Amount $orderAmount;
 
     /**
      * Omitted until processing starts.
@@ -166,6 +184,7 @@ final class Refund extends \Inttegro\DomainValue
      */
     public function __construct(array $data)
     {
+        $this->cancelReason = \Inttegro\ValueHydrator::string($data['cancel_reason'] ?? null, true);
         $this->canceledAt = \Inttegro\ValueHydrator::dateTime($data['canceled_at'] ?? null, true);
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
         $this->customData = \Inttegro\ValueHydrator::array($data['custom_data'] ?? null, true);
@@ -173,6 +192,7 @@ final class Refund extends \Inttegro\DomainValue
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
         $this->lineItems = \Inttegro\ValueHydrator::objects($data['line_items'] ?? null, [\Inttegro\Refund\LineItem::class]);
         $this->orderId = \Inttegro\ValueHydrator::string($data['order_id'] ?? null, false);
+        $this->orderAmount = \Inttegro\ValueHydrator::object($data['order_amount'] ?? null, [Amount::class], true);
         $this->processingAt = \Inttegro\ValueHydrator::dateTime($data['processing_at'] ?? null, true);
         $this->reason = \Inttegro\ValueHydrator::object($data['reason'] ?? null, [\Inttegro\GenericValue::class], false);
         $this->reasonDetails = \Inttegro\ValueHydrator::string($data['reason_details'] ?? null, true);

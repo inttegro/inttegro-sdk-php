@@ -272,15 +272,6 @@ final class ClientTest extends TestCase
     public function test_purchase_intent_exposes_nested_response_types(): void
     {
         $intent = \Inttegro\PurchaseIntent\PurchaseIntent::fromArray([
-            'activity' => [
-                'recent' => [[
-                    'created_at' => '2026-09-09T12:01:00Z',
-                    'id' => 'saleevt_123',
-                    'purchase_intent_id' => 'sale_123',
-                    'type' => 'viewed',
-                    'visitor' => ['ip_address' => '203.0.113.7'],
-                ]],
-            ],
             'allow_variants' => false,
             'created_at' => '2026-09-09T12:00:00Z',
             'id' => 'sale_123',
@@ -301,12 +292,10 @@ final class ClientTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('203.0.113.7', $intent->activity?->recent[0]->visitor?->ipAddress);
         $this->assertSame('Tea House Ltd', $intent->merchant?->organizationName);
         $this->assertSame(1024.0, $intent->product?->dimensions?->digital?->bytes);
         $this->assertSame('or_123', $intent->usage->order?->id);
         $this->assertSame(\Inttegro\PurchaseIntent\Status::Active, $intent->status);
-        $this->assertSame(\Inttegro\PurchaseIntent\ActivityType::Viewed, $intent->activity?->recent[0]->type);
         $this->assertInstanceOf(\DateTimeImmutable::class, $intent->createdAt);
         $this->assertSame('2026-09-09T12:00:00.000+00:00', $intent->toArray()['created_at']);
     }
@@ -735,7 +724,7 @@ final class ClientTest extends TestCase
                 'refund_amount' => ['currency' => 'ghs', 'value' => 100],
             ]],
         ]);
-        $client->refunds->cancel('rf_1');
+        $client->refunds->cancel('rf_1', null, 'Customer no longer wants the refund');
         $client->refunds->lookup('rf_1');
         $client->refunds->page(['page_number' => 1]);
 
