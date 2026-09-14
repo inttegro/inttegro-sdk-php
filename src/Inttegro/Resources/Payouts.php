@@ -33,28 +33,23 @@ class Payouts
      * and match the currency it's assigned to. Only balance transactions that have aged at least
      * 168 hours (7 days) are included in payouts.
      *
-     * @param array $destinations Map of currency codes to financial account IDs
-     *   Example: ['ghs' => 'fa_abc123', 'usd' => 'fa_xyz789']
+     * @param \Inttegro\Payout\Destinations $destinations Supported destination assignments.
      *
      * @return \Inttegro\Payout\SettingsMutation Updated payout settings
      *
      * @example Set payout destinations
      * ```php
-     * $settings = $client->payouts->setDestinations([
-     *     'ghs' => 'fa_mtnmomo_account',
-     *     'usd' => 'fa_bank_account'
-     * ]);
-     *
-     * foreach ($settings->destinations ?? [] as $currency => $accountId) {
-     *     echo "Payouts in $currency go to $accountId\n";
-     * }
+     * $settings = $client->payouts->setDestinations(
+     *     new \Inttegro\Payout\Destinations(['ghs' => 'fa_mtnmomo_account'])
+     * );
+     * echo "GHS payouts go to {$settings->destinations?->ghs}\n";
      * ```
      *
      * @see https://studio.inttegro.com/manage-payout-destinations for payout destination guide
      */
-    public function setDestinations(array $destinations): \Inttegro\Payout\SettingsMutation
+    public function setDestinations(\Inttegro\Payout\Destinations $destinations): \Inttegro\Payout\SettingsMutation
     {
-        return $this->http->postResource('/payouts/set_destinations', \Inttegro\Payout\SettingsMutation::class, 'settings', ['destinations' => $destinations]);
+        return $this->http->postResource('/payouts/set_destinations', \Inttegro\Payout\SettingsMutation::class, 'settings', ['destinations' => $destinations->toArray()]);
     }
 
     /**
@@ -122,7 +117,7 @@ class Payouts
      * When FX is enabled, you can receive payouts in a different currency than your balance
      * currency. Inttegro converts funds at market rates during payout execution.
      *
-     * @return \Inttegro\Payout\SettingsLookup Updated payout settings
+     * @return \Inttegro\Payout\SettingsMutation Updated payout settings
      *
      * @example Enable FX payouts
      * ```php
@@ -132,9 +127,9 @@ class Payouts
      *
      * @see https://studio.inttegro.com/enable-fx-payouts for FX payout guide
      */
-    public function enableFx(): \Inttegro\Payout\SettingsLookup
+    public function enableFx(): \Inttegro\Payout\SettingsMutation
     {
-        return $this->http->postResource('/payouts/enable_fx', \Inttegro\Payout\SettingsLookup::class, 'settings', []);
+        return $this->http->postResource('/payouts/enable_fx', \Inttegro\Payout\SettingsMutation::class, 'settings', []);
     }
 
     /**
@@ -143,7 +138,7 @@ class Payouts
      * After disabling FX, payouts will only be sent in currencies matching your balance currencies.
      * Any financial accounts configured for non-matching currencies will not receive payouts.
      *
-     * @return \Inttegro\Payout\SettingsLookup Updated payout settings
+     * @return \Inttegro\Payout\SettingsMutation Updated payout settings
      *
      * @example Disable FX payouts
      * ```php
@@ -153,9 +148,9 @@ class Payouts
      *
      * @see https://studio.inttegro.com/payouts-fx-conversion for FX details
      */
-    public function disableFx(): \Inttegro\Payout\SettingsLookup
+    public function disableFx(): \Inttegro\Payout\SettingsMutation
     {
-        return $this->http->postResource('/payouts/disable_fx', \Inttegro\Payout\SettingsLookup::class, 'settings', []);
+        return $this->http->postResource('/payouts/disable_fx', \Inttegro\Payout\SettingsMutation::class, 'settings', []);
     }
 
     /**
@@ -164,18 +159,16 @@ class Payouts
      * Returns payouts sorted by initiated_at in descending order (most recent first).
      * Each payout includes amount, currency, destination account, status, and execution timestamps.
      *
-     * @param array<string, mixed> $payload Pagination parameters (optional)
-     *   - page_number: int - 1-based page index (1-10, default: 1)
-     *   - page_size: int - Results per page (1-256, default varies)
+     * @param \Inttegro\Payout\PageRequest $payload Typed pagination parameters.
      *
      * @return \Inttegro\Payout\Page Paginated payout list with page details
      *
      * @example Get recent payouts
      * ```php
-     * $page = $client->payouts->page([
+     * $page = $client->payouts->page(new \Inttegro\Payout\PageRequest([
      *     'page_number' => 1,
      *     'page_size' => 20
-     * ]);
+     * ]));
      *
      * echo "Page {$page->number} contains {$page->size} payouts\n";
      *
@@ -187,9 +180,9 @@ class Payouts
      * @see https://studio.inttegro.com/pagination for pagination guide
      * @see https://studio.inttegro.com/payouts for payout overview
      */
-    public function page(array $payload = []): \Inttegro\Payout\Page
+    public function page(\Inttegro\Payout\PageRequest $payload): \Inttegro\Payout\Page
     {
-        return $this->http->postResource('/payouts/page', \Inttegro\Payout\Page::class, 'page', $payload);
+        return $this->http->postResource('/payouts/page', \Inttegro\Payout\Page::class, 'page', $payload->toArray());
     }
 
     /**
@@ -198,12 +191,12 @@ class Payouts
      * Sends the documented request through the shared authenticated transport and hydrates the
      * successful response into the declared return type.
      *
-     * @param array<string, mixed> $payload Request fields keyed by the documented `snake_case` API names.
+     * @param \Inttegro\Payout\ScheduleRequest $payload Typed destination, amount, reference, and execution fields.
      * @return \Inttegro\Payout\Payout The resulting payout.
      */
-    public function schedule(array $payload): \Inttegro\Payout\Payout
+    public function schedule(\Inttegro\Payout\ScheduleRequest $payload): \Inttegro\Payout\Payout
     {
-        return $this->http->postResource('/payouts/schedule', \Inttegro\Payout\Payout::class, 'payout', $payload);
+        return $this->http->postResource('/payouts/schedule', \Inttegro\Payout\Payout::class, 'payout', $payload->toArray());
     }
 
     /**

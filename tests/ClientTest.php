@@ -646,18 +646,18 @@ final class ClientTest extends TestCase
         $client->paymentMethods->delete('pm_1');
         $client->paymentMethods->settings();
 
-        $client->payouts->setDestinations(['ghs' => 'dest']);
+        $client->payouts->setDestinations(new \Inttegro\Payout\Destinations(['ghs' => 'dest']));
         $client->payouts->settings();
         $client->payouts->disableAutomatic();
         $client->payouts->enableAutomatic();
         $client->payouts->enableFx();
         $client->payouts->disableFx();
-        $client->payouts->page([]);
-        $client->payouts->schedule([
+        $client->payouts->page(new \Inttegro\Payout\PageRequest(['page_number' => 1]));
+        $client->payouts->schedule(new \Inttegro\Payout\ScheduleRequest([
             'destination_id' => 'fa_1',
             'max_amount' => 1,
             'reference' => 'PAYOUT-1',
-        ]);
+        ]));
         $client->payouts->lookup('po_1');
         $client->payouts->cancel('po_1');
 
