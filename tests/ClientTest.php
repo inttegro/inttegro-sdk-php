@@ -724,7 +724,7 @@ final class ClientTest extends TestCase
                 'refund_amount' => ['currency' => 'ghs', 'value' => 100],
             ]],
         ]);
-        $client->refunds->cancel('rf_1');
+        $client->refunds->cancel('rf_1', null, 'Customer no longer wants the refund');
         $client->refunds->lookup('rf_1');
         $client->refunds->page(['page_number' => 1]);
 
