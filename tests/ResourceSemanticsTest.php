@@ -5,10 +5,34 @@ use Inttegro\Payment\Payment;
 use Inttegro\PaymentMethod\PaymentMethod;
 use Inttegro\Product\Product;
 use Inttegro\PurchaseIntent\PurchaseIntent;
+use Inttegro\Refund\FailureReason;
+use Inttegro\Refund\Refund;
 use PHPUnit\Framework\TestCase;
 
 final class ResourceSemanticsTest extends TestCase
 {
+    public function testRefundFailureIsStronglyTypedAndSanitized(): void
+    {
+        $refund = Refund::fromArray([
+            'created_at' => '2026-09-14T12:00:00Z',
+            'failure' => [
+                'detail' => 'The refund could not be completed.',
+                'reason' => 'unknown',
+                'retryable' => false,
+            ],
+            'id' => 'rf_123',
+            'line_items' => [],
+            'order_id' => 'or_123',
+            'reason' => 'item_returned',
+            'status' => 'failed',
+            'total' => ['currency' => 'ghs', 'value' => 100],
+        ]);
+
+        self::assertSame(FailureReason::Unknown, $refund->failure?->reason);
+        self::assertFalse($refund->failure?->retryable);
+        self::assertSame('unknown', $refund->toArray()['failure']['reason']);
+    }
+
     public function testPaymentAndOrderQuestions(): void
     {
         $payment = Payment::fromArray([

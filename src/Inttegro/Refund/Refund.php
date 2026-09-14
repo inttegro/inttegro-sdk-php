@@ -70,6 +70,9 @@ final class Refund extends \Inttegro\DomainValue
      */
     public readonly ?DateTimeImmutable $failedAt;
 
+    /** Sanitized terminal failure information. Wire field: `failure`. */
+    public readonly ?Failure $failure;
+
     /**
      * Unique identifier for this refund.
      *
@@ -189,6 +192,7 @@ final class Refund extends \Inttegro\DomainValue
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
         $this->customData = \Inttegro\ValueHydrator::array($data['custom_data'] ?? null, true);
         $this->failedAt = \Inttegro\ValueHydrator::dateTime($data['failed_at'] ?? null, true);
+        $this->failure = \Inttegro\ValueHydrator::object($data['failure'] ?? null, [Failure::class], true);
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
         $this->lineItems = \Inttegro\ValueHydrator::objects($data['line_items'] ?? null, [\Inttegro\Refund\LineItem::class]);
         $this->orderId = \Inttegro\ValueHydrator::string($data['order_id'] ?? null, false);
