@@ -17,12 +17,21 @@ final class SettingsMutation extends \Inttegro\DomainValue
     /**
      * Currency-to-financial-account destination assignments.
      *
-     * Optional response field. PHP type: `array<string, string>|null`; wire field: `destinations`
-     * (`object`).
+     * Optional response field. PHP type: `\Inttegro\Payout\Destinations|null`; wire field:
+     * `destinations` (`object`).
      *
-     * @var array<string, string>|null
+     * @var \Inttegro\Payout\Destinations|null
      */
-    public readonly ?array $destinations;
+    public readonly ?\Inttegro\Payout\Destinations $destinations;
+
+    /**
+     * Updated foreign-exchange setting returned by FX mutations.
+     *
+     * Optional response field. PHP type: `bool|null`; wire field: `fx_enabled` (`boolean`).
+     *
+     * @var bool|null
+     */
+    public readonly ?bool $fxEnabled;
 
     /**
      * Payout settings identifier.
@@ -50,7 +59,8 @@ final class SettingsMutation extends \Inttegro\DomainValue
      */
     public function __construct(array $data)
     {
-        $this->destinations = \Inttegro\ValueHydrator::array($data['destinations'] ?? null, true);
+        $this->destinations = \Inttegro\ValueHydrator::object($data['destinations'] ?? null, [\Inttegro\Payout\Destinations::class], true);
+        $this->fxEnabled = \Inttegro\ValueHydrator::bool($data['fx_enabled'] ?? null, true);
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, true);
         $this->schedule = \Inttegro\ValueHydrator::object($data['schedule'] ?? null, [\Inttegro\Payout\SettingsMutationSchedule::class], true);
     }

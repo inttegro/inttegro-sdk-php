@@ -6,5 +6,5 @@ namespace Inttegro;
 class Version
 {
     /** Semantic version of this SDK build. */
-    public const VERSION = '8.1.0';
+    public const VERSION = '9.0.0';
 }

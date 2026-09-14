@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+## [9.0.0] - 2026-09-14
+
+- Breaking: replaced payout arrays and generic payloads with named request,
+  response, settings, page, error, and destination objects.
+- Made `ghs` the explicit supported payout-destination property and exposed
+  payout timestamps as `DateTimeImmutable` values.
+- Removed server-internal purchase-intent activity response models and exposed
+  refund order and cancellation context.
+
 ## [8.1.0] - 2026-09-12
 
 - Added opt-in response envelopes that expose status, headers, request IDs,
