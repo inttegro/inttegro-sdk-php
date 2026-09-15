@@ -108,6 +108,15 @@ final class PaymentMethod extends \Inttegro\DomainValue
     public readonly ?DateTimeImmutable $expiresOn;
 
     /**
+     * App-customer-local fingerprint. An empty string means it is unavailable.
+     *
+     * Required response field. PHP type: `string`; wire field: `fingerprint` (`string`).
+     *
+     * @var string
+     */
+    public readonly string $fingerprint;
+
+    /**
      * Unique identifier for this payment method.
      *
      * Required response field. PHP type: `string`; wire field: `id` (`string`).
@@ -193,6 +202,7 @@ final class PaymentMethod extends \Inttegro\DomainValue
         $this->customerId = \Inttegro\ValueHydrator::string($data['customer_id'] ?? null, false);
         $this->ephemeral = \Inttegro\ValueHydrator::bool($data['ephemeral'] ?? null, true);
         $this->expiresOn = \Inttegro\ValueHydrator::dateTime($data['expires_on'] ?? null, true);
+        $this->fingerprint = \Inttegro\ValueHydrator::string($data['fingerprint'] ?? null, false);
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
         $this->mobileMoney = \Inttegro\ValueHydrator::object($data['mobile_money'] ?? null, [\Inttegro\PaymentMethod\MobileMoney::class], true);
         $this->owner = \Inttegro\ValueHydrator::object($data['owner'] ?? null, [\Inttegro\PaymentMethod\Owner::class], true);
