@@ -92,12 +92,12 @@ final class Updated extends \Inttegro\DomainValue
      * Merchant-defined string values attached to a resource. SDKs expose this as a semantic
      * collection rather than a raw map.
      *
-     * Optional response field. PHP type: `array<string, string>|null`; wire field: `custom_data`
+     * Optional response field. PHP type: `\Inttegro\CustomData|null`; wire field: `custom_data`
      * (`object`).
      *
-     * @var array<string, string>|null
+     * @var \Inttegro\CustomData|null
      */
-    public readonly ?array $customData;
+    public readonly ?\Inttegro\CustomData $customData;
 
     /**
      * At most one of `physical`, `digital`, or `custom`.
@@ -166,7 +166,9 @@ final class Updated extends \Inttegro\DomainValue
         $this->reference = \Inttegro\ValueHydrator::string($data['reference'] ?? null, true);
         $this->taxCode = \Inttegro\ValueHydrator::string($data['tax_code'] ?? null, true);
         $this->category = \Inttegro\ValueHydrator::string($data['category'] ?? null, true);
-        $this->customData = \Inttegro\ValueHydrator::array($data['custom_data'] ?? null, true);
+        $this->customData = !isset($data['custom_data'])
+            ? null
+            : \Inttegro\CustomData::fromArray(is_array($data['custom_data']) ? $data['custom_data'] : []);
         $this->dimensions = \Inttegro\ValueHydrator::object($data['dimensions'] ?? null, [\Inttegro\Product\Dimensions::class], true);
         $this->prices = \Inttegro\ValueHydrator::objects($data['prices'] ?? null, [\Inttegro\Product\PriceSummary::class]);
         $this->unitDim = \Inttegro\ValueHydrator::string($data['unit_dim'] ?? null, true);

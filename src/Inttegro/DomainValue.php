@@ -122,6 +122,9 @@ abstract class DomainValue implements ArrayAccess, JsonSerializable
         if ($value instanceof BackedEnum) {
             return $value->value;
         }
+        if ($value instanceof JsonSerializable) {
+            return $value->jsonSerialize();
+        }
         if (is_array($value)) {
             return array_map([self::class, 'export'], $value);
         }

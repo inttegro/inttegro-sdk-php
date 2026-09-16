@@ -30,12 +30,12 @@ class Customers
      * Sends the documented request through the shared authenticated transport and hydrates the
      * successful response into the declared return type.
      *
-     * @param array<string, mixed> $payload Request fields keyed by the documented `snake_case` API names.
+     * @param \Inttegro\Customer\CreateRequest|array<string, mixed> $payload Typed request or compatible wire fields.
      * @return \Inttegro\Customer\Customer The created customer.
      */
-    public function create(array $payload): \Inttegro\Customer\Customer
+    public function create(\Inttegro\Customer\CreateRequest|array $payload): \Inttegro\Customer\Customer
     {
-        return $this->http->postResource('/customers/create', \Inttegro\Customer\Customer::class, 'customer', $payload);
+        return $this->http->postResource('/customers/create', \Inttegro\Customer\Customer::class, 'customer', self::payload($payload));
     }
 
     /**
@@ -58,14 +58,14 @@ class Customers
      * Sends the documented request through the shared authenticated transport and hydrates the
      * successful response into the declared return type.
      *
-     * @param array<string, mixed> $payload Request fields keyed by the documented `snake_case` API names.
+     * @param \Inttegro\Customer\UpdateRequest|array<string, mixed> $payload Typed request or compatible wire fields.
      * @param ?string $idempotencyKey Optional idempotency key for safely retrying the same logical write.
      * @return \Inttegro\Customer\Customer The updated customer.
      */
-    public function update(array $payload, ?string $idempotencyKey = null): \Inttegro\Customer\Customer
+    public function update(\Inttegro\Customer\UpdateRequest|array $payload, ?string $idempotencyKey = null): \Inttegro\Customer\Customer
     {
         $headers = $idempotencyKey ? ['Idempotency-Key' => $idempotencyKey] : [];
-        return $this->http->postResource('/customers/update', \Inttegro\Customer\Customer::class, 'customer', $payload, $headers);
+        return $this->http->postResource('/customers/update', \Inttegro\Customer\Customer::class, 'customer', self::payload($payload), $headers);
     }
 
     /**
@@ -80,5 +80,14 @@ class Customers
     public function page(array $payload = []): \Inttegro\Customer\Page
     {
         return $this->http->postResource('/customers/page', \Inttegro\Customer\Page::class, 'page', $payload);
+    }
+
+    /**
+     * @param \Inttegro\DomainValue|array<string, mixed> $payload
+     * @return array<string, mixed>
+     */
+    private static function payload(\Inttegro\DomainValue|array $payload): array
+    {
+        return $payload instanceof \Inttegro\DomainValue ? $payload->toArray() : $payload;
     }
 }

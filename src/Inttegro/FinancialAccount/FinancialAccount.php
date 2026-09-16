@@ -50,12 +50,12 @@ final class FinancialAccount extends \Inttegro\DomainValue
      * Merchant-defined string values attached to a resource. SDKs expose this as a semantic
      * collection rather than a raw map.
      *
-     * Optional response field. PHP type: `array<string, string>|null`; wire field: `custom_data`
+     * Optional response field. PHP type: `\Inttegro\CustomData|null`; wire field: `custom_data`
      * (`object`).
      *
-     * @var array<string, string>|null
+     * @var \Inttegro\CustomData|null
      */
-    public readonly ?array $customData;
+    public readonly ?\Inttegro\CustomData $customData;
 
     /**
      * Human-readable description.
@@ -213,7 +213,9 @@ final class FinancialAccount extends \Inttegro\DomainValue
         $this->archivedAt = \Inttegro\ValueHydrator::dateTime($data['archived_at'] ?? null, true);
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
         $this->currency = \Inttegro\ValueHydrator::string($data['currency'] ?? null, false);
-        $this->customData = \Inttegro\ValueHydrator::array($data['custom_data'] ?? null, true);
+        $this->customData = !isset($data['custom_data'])
+            ? null
+            : \Inttegro\CustomData::fromArray(is_array($data['custom_data']) ? $data['custom_data'] : []);
         $this->description = \Inttegro\ValueHydrator::string($data['description'] ?? null, true);
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
         $this->institution = \Inttegro\ValueHydrator::object($data['institution'] ?? null, [\Inttegro\FinancialAccount\FinancialInstitution::class], true);

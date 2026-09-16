@@ -1,8 +1,17 @@
 <?php
 
 use Inttegro\Order\Order;
+use Inttegro\Customer\AddressInput;
+use Inttegro\Customer\CreateRequest as CreateCustomerRequest;
+use Inttegro\Customer\Customer;
+use Inttegro\Customer\UpdateRequest as UpdateCustomerRequest;
+use Inttegro\CustomData;
+use Inttegro\CustomDataInput;
+use Inttegro\CustomDataPatch;
 use Inttegro\Payment\Payment;
 use Inttegro\PaymentMethod\PaymentMethod;
+use Inttegro\Payout\PageRequest;
+use Inttegro\Payout\ScheduleRequest;
 use Inttegro\Product\Product;
 use Inttegro\PurchaseIntent\PurchaseIntent;
 use Inttegro\Refund\FailureReason;
@@ -12,6 +21,70 @@ use PHPUnit\Framework\TestCase;
 
 final class ResourceSemanticsTest extends TestCase
 {
+    public function testCustomerRequestsUseTypedAddressesAndCustomData(): void
+    {
+        $address = new AddressInput([
+            'city' => 'Accra',
+            'country' => 'gh',
+            'line1' => '1 Independence Avenue',
+        ]);
+        $customData = new CustomDataInput([
+            'preferences' => ['newsletter' => true],
+            'segment' => 'founder',
+        ]);
+        $create = new CreateCustomerRequest([
+            'billing_address' => $address,
+            'custom_data' => $customData,
+            'name' => 'Ama Mensah',
+        ]);
+        $update = new UpdateCustomerRequest([
+            'customer_id' => 'cu_123',
+            'shipping_address' => $address,
+        ]);
+
+        self::assertInstanceOf(AddressInput::class, $create->billingAddress);
+        self::assertInstanceOf(CustomDataInput::class, $create->customData);
+        self::assertSame('Accra', $create->toArray()['billing_address']['city']);
+        self::assertTrue($create->toArray()['custom_data']['preferences']['newsletter']);
+        self::assertSame('gh', $update->toArray()['shipping_address']['country']);
+        self::assertArrayNotHasKey('billing_address', $update->toArray());
+    }
+
+    public function testCustomDataCollectionsAreImmutableAndPatchAware(): void
+    {
+        $returned = CustomData::fromArray(['segment' => 'founder']);
+        $updated = $returned->with('region', 'gh');
+        $patch = (new CustomDataPatch(['segment' => 'founder']))->removing('segment');
+
+        self::assertSame(['segment' => 'founder'], $returned->toArray());
+        self::assertSame('gh', $updated['region']);
+        self::assertSame(['segment' => null], $patch->toArray());
+
+        $customer = Customer::fromArray([
+            'created_at' => '2026-09-16T06:00:00Z',
+            'custom_data' => ['segment' => 'founder'],
+            'guest' => false,
+            'id' => 'cu_123',
+            'name' => 'Ama Mensah',
+        ]);
+        self::assertInstanceOf(CustomData::class, $customer->customData);
+    }
+
+    public function testPayoutRequestsExposeKnownFieldsStatically(): void
+    {
+        $page = new PageRequest(['page_number' => 2, 'page_size' => 100]);
+        $schedule = new ScheduleRequest([
+            'destination_id' => 'fa_ghs',
+            'execute_after' => '2026-09-15T09:00:00Z',
+            'max_amount' => 12500,
+            'reference' => 'PAYOUT-1',
+        ]);
+
+        self::assertSame(2, $page->pageNumber);
+        self::assertSame('fa_ghs', $schedule->destinationId);
+        self::assertSame('2026-09-15T09:00:00.000+00:00', $schedule->toArray()['execute_after']);
+    }
+
     public function testRefundFailureIsStronglyTypedAndSanitized(): void
     {
         $refund = Refund::fromArray([

@@ -63,12 +63,12 @@ final class ProductLineItemProduct extends \Inttegro\DomainValue
      * Merchant-defined string values attached to a resource. SDKs expose this as a semantic
      * collection rather than a raw map.
      *
-     * Optional response field. PHP type: `array<string, string>|null`; wire field: `custom_data`
+     * Optional response field. PHP type: `\Inttegro\CustomData|null`; wire field: `custom_data`
      * (`object`).
      *
-     * @var array<string, string>|null
+     * @var \Inttegro\CustomData|null
      */
-    public readonly ?array $customData;
+    public readonly ?\Inttegro\CustomData $customData;
 
     /**
      * Tax Code value for this product line item product.
@@ -136,7 +136,9 @@ final class ProductLineItemProduct extends \Inttegro\DomainValue
         $this->priceId = \Inttegro\ValueHydrator::string($data['price_id'] ?? null, true);
         $this->reference = \Inttegro\ValueHydrator::string($data['reference'] ?? null, true);
         $this->about = \Inttegro\ValueHydrator::string($data['about'] ?? null, true);
-        $this->customData = \Inttegro\ValueHydrator::array($data['custom_data'] ?? null, true);
+        $this->customData = !isset($data['custom_data'])
+            ? null
+            : \Inttegro\CustomData::fromArray(is_array($data['custom_data']) ? $data['custom_data'] : []);
         $this->taxCode = \Inttegro\ValueHydrator::string($data['tax_code'] ?? null, true);
         $this->name = \Inttegro\ValueHydrator::string($data['name'] ?? null, false);
         $this->category = \Inttegro\ValueHydrator::string($data['category'] ?? null, true);

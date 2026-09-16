@@ -47,12 +47,12 @@ final class InvoiceSettings extends \Inttegro\DomainValue
      * Merchant-defined string values attached to a resource. SDKs expose this as a semantic
      * collection rather than a raw map.
      *
-     * Optional response field. PHP type: `array<string, string>|null`; wire field: `custom_data`
+     * Optional response field. PHP type: `\Inttegro\CustomData|null`; wire field: `custom_data`
      * (`object`).
      *
-     * @var array<string, string>|null
+     * @var \Inttegro\CustomData|null
      */
-    public readonly ?array $customData;
+    public readonly ?\Inttegro\CustomData $customData;
 
     /**
      * Hydrates an InvoiceSettings from decoded Inttegro API data.
@@ -64,7 +64,9 @@ final class InvoiceSettings extends \Inttegro\DomainValue
         $this->number = \Inttegro\ValueHydrator::string($data['number'] ?? null, true);
         $this->memo = \Inttegro\ValueHydrator::string($data['memo'] ?? null, true);
         $this->footer = \Inttegro\ValueHydrator::string($data['footer'] ?? null, true);
-        $this->customData = \Inttegro\ValueHydrator::array($data['custom_data'] ?? null, true);
+        $this->customData = !isset($data['custom_data'])
+            ? null
+            : \Inttegro\CustomData::fromArray(is_array($data['custom_data']) ? $data['custom_data'] : []);
     }
 
     /**
