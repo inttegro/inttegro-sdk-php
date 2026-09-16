@@ -115,12 +115,12 @@ final class FileLink extends \Inttegro\DomainValue
      * Merchant-defined string values attached to a resource. SDKs expose this as a semantic
      * collection rather than a raw map.
      *
-     * Optional response field. PHP type: `array<string, string>|null`; wire field: `custom_data`
+     * Optional response field. PHP type: `\Inttegro\CustomData|null`; wire field: `custom_data`
      * (`object`).
      *
-     * @var array<string, string>|null
+     * @var \Inttegro\CustomData|null
      */
-    public readonly ?array $customData;
+    public readonly ?\Inttegro\CustomData $customData;
 
     /**
      * System-managed string metadata attached to a file resource.
@@ -193,7 +193,9 @@ final class FileLink extends \Inttegro\DomainValue
         $this->access = \Inttegro\ValueHydrator::object($data['access'] ?? null, [\Inttegro\FileLink\Access::class], false);
         $this->createdBy = \Inttegro\ValueHydrator::object($data['created_by'] ?? null, [\Inttegro\FileLink\Actor::class], false);
         $this->revokedBy = \Inttegro\ValueHydrator::object($data['revoked_by'] ?? null, [\Inttegro\FileLink\Actor::class], true);
-        $this->customData = \Inttegro\ValueHydrator::array($data['custom_data'] ?? null, true);
+        $this->customData = !isset($data['custom_data'])
+            ? null
+            : \Inttegro\CustomData::fromArray(is_array($data['custom_data']) ? $data['custom_data'] : []);
         $this->metadata = \Inttegro\ValueHydrator::array($data['metadata'] ?? null, true);
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
         $this->updatedAt = \Inttegro\ValueHydrator::dateTime($data['updated_at'] ?? null, false);

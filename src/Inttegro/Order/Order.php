@@ -62,12 +62,12 @@ final class Order extends \Inttegro\DomainValue
      * Merchant-defined string values attached to a resource. SDKs expose this as a semantic
      * collection rather than a raw map.
      *
-     * Optional response field. PHP type: `array<string, string>|null`; wire field: `custom_data`
+     * Optional response field. PHP type: `\Inttegro\CustomData|null`; wire field: `custom_data`
      * (`object`).
      *
-     * @var array<string, string>|null
+     * @var \Inttegro\CustomData|null
      */
-    public readonly ?array $customData;
+    public readonly ?\Inttegro\CustomData $customData;
 
     /**
      * Customer value for this order.
@@ -243,7 +243,9 @@ final class Order extends \Inttegro\DomainValue
         $this->checkoutSettings = \Inttegro\ValueHydrator::object($data['checkout_settings'] ?? null, [\Inttegro\Order\CheckoutSettings::class], true);
         $this->completedAt = \Inttegro\ValueHydrator::dateTime($data['completed_at'] ?? null, true);
         $this->createdFrom = \Inttegro\ValueHydrator::object($data['created_from'] ?? null, [\Inttegro\Order\CreatedFrom::class], true);
-        $this->customData = \Inttegro\ValueHydrator::array($data['custom_data'] ?? null, true);
+        $this->customData = !isset($data['custom_data'])
+            ? null
+            : \Inttegro\CustomData::fromArray(is_array($data['custom_data']) ? $data['custom_data'] : []);
         $this->customer = \Inttegro\ValueHydrator::object($data['customer'] ?? null, [\Inttegro\Order\Customer::class], false);
         $this->expiresAt = \Inttegro\ValueHydrator::dateTime($data['expires_at'] ?? null, true);
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);

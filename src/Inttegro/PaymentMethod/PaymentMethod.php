@@ -71,12 +71,12 @@ final class PaymentMethod extends \Inttegro\DomainValue
      * Merchant-defined string values attached to a resource. SDKs expose this as a semantic
      * collection rather than a raw map.
      *
-     * Optional response field. PHP type: `array<string, string>|null`; wire field: `custom_data`
+     * Optional response field. PHP type: `\Inttegro\CustomData|null`; wire field: `custom_data`
      * (`object`).
      *
-     * @var array<string, string>|null
+     * @var \Inttegro\CustomData|null
      */
-    public readonly ?array $customData;
+    public readonly ?\Inttegro\CustomData $customData;
 
     /**
      * Customer who owns this payment method.
@@ -198,7 +198,9 @@ final class PaymentMethod extends \Inttegro\DomainValue
         $this->bankAccount = \Inttegro\ValueHydrator::object($data['bank_account'] ?? null, [\Inttegro\PaymentMethod\BankAccount::class], true);
         $this->card = \Inttegro\ValueHydrator::object($data['card'] ?? null, [\Inttegro\PaymentMethod\Card::class], true);
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
-        $this->customData = \Inttegro\ValueHydrator::array($data['custom_data'] ?? null, true);
+        $this->customData = !isset($data['custom_data'])
+            ? null
+            : \Inttegro\CustomData::fromArray(is_array($data['custom_data']) ? $data['custom_data'] : []);
         $this->customerId = \Inttegro\ValueHydrator::string($data['customer_id'] ?? null, false);
         $this->ephemeral = \Inttegro\ValueHydrator::bool($data['ephemeral'] ?? null, true);
         $this->expiresOn = \Inttegro\ValueHydrator::dateTime($data['expires_on'] ?? null, true);

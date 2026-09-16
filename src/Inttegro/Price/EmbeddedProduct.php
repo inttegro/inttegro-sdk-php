@@ -89,12 +89,12 @@ final class EmbeddedProduct extends \Inttegro\DomainValue
      * Merchant-defined string values attached to a resource. SDKs expose this as a semantic
      * collection rather than a raw map.
      *
-     * Optional response field. PHP type: `array<string, string>|null`; wire field: `custom_data`
+     * Optional response field. PHP type: `\Inttegro\CustomData|null`; wire field: `custom_data`
      * (`object`).
      *
-     * @var array<string, string>|null
+     * @var \Inttegro\CustomData|null
      */
-    public readonly ?array $customData;
+    public readonly ?\Inttegro\CustomData $customData;
 
     /**
      * Short description.
@@ -216,7 +216,9 @@ final class EmbeddedProduct extends \Inttegro\DomainValue
         $this->attributes = \Inttegro\ValueHydrator::objects($data['attributes'] ?? null, [\Inttegro\Price\EmbeddedProductAttributesItem::class]);
         $this->category = \Inttegro\ValueHydrator::string($data['category'] ?? null, true);
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
-        $this->customData = \Inttegro\ValueHydrator::array($data['custom_data'] ?? null, true);
+        $this->customData = !isset($data['custom_data'])
+            ? null
+            : \Inttegro\CustomData::fromArray(is_array($data['custom_data']) ? $data['custom_data'] : []);
         $this->description = \Inttegro\ValueHydrator::string($data['description'] ?? null, true);
         $this->dimensions = \Inttegro\ValueHydrator::object($data['dimensions'] ?? null, [\Inttegro\Product\Dimensions::class], true);
         $this->media = \Inttegro\ValueHydrator::object($data['media'] ?? null, [\Inttegro\Product\Media::class], true);

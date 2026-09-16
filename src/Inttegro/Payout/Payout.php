@@ -50,12 +50,12 @@ final class Payout extends \Inttegro\DomainValue
      * Merchant-defined string values attached to a resource. SDKs expose this as a semantic
      * collection rather than a raw map.
      *
-     * Optional response field. PHP type: `array<string, string>|null`; wire field: `custom_data`
+     * Optional response field. PHP type: `\Inttegro\CustomData|null`; wire field: `custom_data`
      * (`object`).
      *
-     * @var array<string, string>|null
+     * @var \Inttegro\CustomData|null
      */
-    public readonly ?array $customData;
+    public readonly ?\Inttegro\CustomData $customData;
 
     /**
      * Financial account receiving the funds.
@@ -245,7 +245,9 @@ final class Payout extends \Inttegro\DomainValue
         $this->amount = \Inttegro\ValueHydrator::object($data['amount'] ?? null, [Amount::class], true);
         $this->balanceTransactions = \Inttegro\ValueHydrator::array($data['balance_transactions'] ?? null, true);
         $this->canceledAt = \Inttegro\ValueHydrator::dateTime($data['canceled_at'] ?? null, true);
-        $this->customData = \Inttegro\ValueHydrator::array($data['custom_data'] ?? null, true);
+        $this->customData = !isset($data['custom_data'])
+            ? null
+            : \Inttegro\CustomData::fromArray(is_array($data['custom_data']) ? $data['custom_data'] : []);
         $this->destinationId = \Inttegro\ValueHydrator::string($data['destination_id'] ?? null, false);
         $this->error = \Inttegro\ValueHydrator::object($data['error'] ?? null, [\Inttegro\Payout\Error::class], true);
         $this->executeAfter = \Inttegro\ValueHydrator::dateTime($data['execute_after'] ?? null, false);

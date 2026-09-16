@@ -51,12 +51,12 @@ final class Customer extends \Inttegro\DomainValue
      * Merchant-defined string values attached to a resource. SDKs expose this as a semantic
      * collection rather than a raw map.
      *
-     * Optional response field. PHP type: `array<string, string>|null`; wire field: `custom_data`
+     * Optional response field. PHP type: `\Inttegro\CustomData|null`; wire field: `custom_data`
      * (`object`).
      *
-     * @var array<string, string>|null
+     * @var \Inttegro\CustomData|null
      */
-    public readonly ?array $customData;
+    public readonly ?\Inttegro\CustomData $customData;
 
     /**
      * Email Address value for this customer.
@@ -161,7 +161,9 @@ final class Customer extends \Inttegro\DomainValue
         $this->balance = \Inttegro\ValueHydrator::objectMap($data['balance'] ?? null, [\Inttegro\Customer\BalanceValue::class]);
         $this->billingAddress = \Inttegro\ValueHydrator::object($data['billing_address'] ?? null, [\Inttegro\Customer\Address::class], true);
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
-        $this->customData = \Inttegro\ValueHydrator::array($data['custom_data'] ?? null, true);
+        $this->customData = !isset($data['custom_data'])
+            ? null
+            : \Inttegro\CustomData::fromArray(is_array($data['custom_data']) ? $data['custom_data'] : []);
         $this->emailAddress = \Inttegro\ValueHydrator::string($data['email_address'] ?? null, true);
         $this->guest = \Inttegro\ValueHydrator::bool($data['guest'] ?? null, false);
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);

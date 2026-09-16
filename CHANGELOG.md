@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [10.0.0] - 2026-09-16
+
+- Breaking: replaced generic customer address and custom-data arrays with
+  native address DTOs and immutable custom-data value objects.
+- Added distinct custom-data response, request-input, and merge-patch types so
+  open-ended JSON remains supported without ambiguous mutation semantics.
+
 ## [9.0.0] - 2026-09-14
 
 - Breaking: replaced payout arrays and generic payloads with named request,
