@@ -39,7 +39,7 @@ class Otp
      *   - sender: string - Sender identifier (required)
      *   - service_name: string - Service name in message (required)
      *   - request_meta: array - Request controls such as idempotency_key (optional)
-     *   - purpose: string - Description of why OTP is needed (optional)
+     *   - purpose: string - One of the `Inttegro\Otp\Purpose` wire values (required)
      *   - Additional transaction configuration parameters
      *
      * @return \Inttegro\Otp\Transaction Created OTP session

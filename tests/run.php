@@ -268,7 +268,7 @@ $client->otp->initiate([
     'sender' => 'Acme',
     'service_name' => 'Acme Bank',
     'idempotency_key' => 'otp_login_1700000000',
-    'purpose' => 'login',
+    'purpose' => 'sign_in',
 ]);
 $client->otp->verify(['transaction_id' => 'txn_1', 'recipient' => '+233', 'token' => '123456']);
 $client->otp->lookup(['transaction_id' => 'txn_1']);

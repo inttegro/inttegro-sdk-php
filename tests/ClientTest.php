@@ -266,6 +266,7 @@ final class ClientTest extends TestCase
         $this->assertSame('mtn', MobileMoneyNetwork::MTN->value);
         $this->assertSame('ghs', Currency::GHS->value);
         $this->assertSame('requested_by_customer', Reason::RequestedByCustomer->value);
+        $this->assertSame('sign_in', \Inttegro\Otp\Purpose::SignIn->value);
         $this->assertSame('{"status":"pending"}', json_encode(['status' => Status::Pending]));
     }
 
@@ -765,7 +766,7 @@ final class ClientTest extends TestCase
             'sender' => 'Acme',
             'service_name' => 'Acme Bank',
             'idempotency_key' => 'otp_login_1700000000',
-            'purpose' => 'login',
+            'purpose' => 'sign_in',
         ]);
         $client->otp->verify(['transaction_id' => 'txn_1', 'recipient' => '+233', 'token' => '123456']);
         $client->otp->lookup(['transaction_id' => 'txn_1']);
