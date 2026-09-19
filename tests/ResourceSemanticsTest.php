@@ -16,6 +16,7 @@ use Inttegro\Product\Product;
 use Inttegro\PurchaseIntent\PurchaseIntent;
 use Inttegro\Refund\FailureReason;
 use Inttegro\Refund\PaymentMethodSettlement;
+use Inttegro\Refund\ProductOrderLineItem;
 use Inttegro\Refund\Refund;
 use PHPUnit\Framework\TestCase;
 
@@ -95,7 +96,18 @@ final class ResourceSemanticsTest extends TestCase
                 'retryable' => false,
             ],
             'id' => 'rf_123',
-            'line_items' => [],
+            'line_items' => [[
+                'id' => 'rli_123',
+                'order_line_item_id' => 'oli_123',
+                'order_line_item' => [
+                    'id' => 'oli_123',
+                    'type' => 'product',
+                    'quantity' => 2,
+                    'product' => ['id' => 'prod_123', 'name' => 'Premium subscription'],
+                ],
+                'original_amount_paid' => ['currency' => 'ghs', 'value' => 200],
+                'refund_amount' => ['currency' => 'ghs', 'value' => 100],
+            ]],
             'order_id' => 'or_123',
             'reason' => 'item_returned',
             'settlement' => [
@@ -117,6 +129,8 @@ final class ResourceSemanticsTest extends TestCase
         self::assertSame(FailureReason::Unknown, $refund->failure?->reason);
         self::assertInstanceOf(PaymentMethodSettlement::class, $refund->settlement);
         self::assertSame('****7831', $refund->settlement->paymentMethod->mobileMoney->accountNumber);
+        self::assertInstanceOf(ProductOrderLineItem::class, $refund->lineItems[0]->orderLineItem);
+        self::assertSame('prod_123', $refund->lineItems[0]->orderLineItem->product->id);
         self::assertFalse($refund->failure?->retryable);
         self::assertSame('unknown', $refund->toArray()['failure']['reason']);
     }

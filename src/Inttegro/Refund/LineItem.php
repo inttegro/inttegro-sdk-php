@@ -30,8 +30,19 @@ final class LineItem extends \Inttegro\DomainValue
      * Required response field. PHP type: `string`; wire field: `order_line_item_id` (`string`).
      *
      * @var string
+     * @deprecated Use `$orderLineItem->id` when the snapshot is present.
      */
     public readonly string $orderLineItemId;
+
+    /**
+     * Immutable display snapshot of the refunded order line.
+     *
+     * Optional response field. PHP type: `ProductOrderLineItem|FeeOrderLineItem|ShippingOrderLineItem|null`;
+     * wire field: `order_line_item` (`object`). Omitted for legacy records whose order cannot be resolved.
+     *
+     * @var ProductOrderLineItem|FeeOrderLineItem|ShippingOrderLineItem|null
+     */
+    public readonly ProductOrderLineItem|FeeOrderLineItem|ShippingOrderLineItem|null $orderLineItem;
 
     /**
      * Original Amount Paid value for this line item.
@@ -80,6 +91,14 @@ final class LineItem extends \Inttegro\DomainValue
     {
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
         $this->orderLineItemId = \Inttegro\ValueHydrator::string($data['order_line_item_id'] ?? null, false);
+        $orderLineItem = \Inttegro\ValueHydrator::array($data['order_line_item'] ?? null, true);
+        $this->orderLineItem = match ($orderLineItem['type'] ?? null) {
+            'product' => ProductOrderLineItem::fromArray($orderLineItem),
+            'fee' => FeeOrderLineItem::fromArray($orderLineItem),
+            'shipping' => ShippingOrderLineItem::fromArray($orderLineItem),
+            null => null,
+            default => throw new \InvalidArgumentException('Unsupported refund order line item type.'),
+        };
         $this->originalAmountPaid = \Inttegro\ValueHydrator::object($data['original_amount_paid'] ?? null, [Amount::class], false);
         $this->reason = \Inttegro\ValueHydrator::object($data['reason'] ?? null, [\Inttegro\GenericValue::class], true);
         $this->reasonDetails = \Inttegro\ValueHydrator::string($data['reason_details'] ?? null, true);
