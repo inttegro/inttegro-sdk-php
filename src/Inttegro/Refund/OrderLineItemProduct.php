@@ -5,7 +5,22 @@ namespace Inttegro\Refund;
 /** Product identity captured in a refund order-line snapshot. */
 final class OrderLineItemProduct extends \Inttegro\DomainValue
 {
+    /**
+     * Source catalog product identifier when the order used a saved product.
+     *
+     * Optional response field. PHP type: `string|null`; wire field: `id` (`string`).
+     *
+     * @var string|null
+     */
     public readonly ?string $id;
+
+    /**
+     * Product name captured on the order.
+     *
+     * Required response field. PHP type: `string`; wire field: `name` (`string`).
+     *
+     * @var string
+     */
     public readonly string $name;
 
     /** @param array<string, mixed> $data */

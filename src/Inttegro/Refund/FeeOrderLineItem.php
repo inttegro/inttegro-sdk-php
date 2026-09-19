@@ -5,8 +5,31 @@ namespace Inttegro\Refund;
 /** Immutable fee order-line snapshot attached to a refund. */
 final class FeeOrderLineItem extends \Inttegro\DomainValue
 {
+    /**
+     * Immutable order-line identifier.
+     *
+     * Required response field. PHP type: `string`; wire field: `id` (`string`).
+     *
+     * @var string
+     */
     public readonly string $id;
+
+    /**
+     * Discriminator identifying this snapshot as a fee line.
+     *
+     * Required response field. PHP type: `string`; wire field: `type` (`string`, always `fee`).
+     *
+     * @var string
+     */
     public readonly string $type;
+
+    /**
+     * Fee label and description captured on the order.
+     *
+     * Required response field. PHP type: `OrderLineItemAdjustment`; wire field: `fee` (`object`).
+     *
+     * @var OrderLineItemAdjustment
+     */
     public readonly OrderLineItemAdjustment $fee;
 
     /** @param array<string, mixed> $data */

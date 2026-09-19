@@ -37,7 +37,10 @@ final class LineItem extends \Inttegro\DomainValue
     /**
      * Immutable display snapshot of the refunded order line.
      *
-     * Optional response field; omitted for legacy records whose order cannot be resolved.
+     * Optional response field. PHP type: `ProductOrderLineItem|FeeOrderLineItem|ShippingOrderLineItem|null`;
+     * wire field: `order_line_item` (`object`). Omitted for legacy records whose order cannot be resolved.
+     *
+     * @var ProductOrderLineItem|FeeOrderLineItem|ShippingOrderLineItem|null
      */
     public readonly ProductOrderLineItem|FeeOrderLineItem|ShippingOrderLineItem|null $orderLineItem;
 

@@ -5,7 +5,22 @@ namespace Inttegro\Refund;
 /** Descriptive fields captured for a refund fee or shipping line. */
 final class OrderLineItemAdjustment extends \Inttegro\DomainValue
 {
+    /**
+     * Human-readable label captured on the order line.
+     *
+     * Optional response field. PHP type: `string|null`; wire field: `label` (`string`).
+     *
+     * @var string|null
+     */
     public readonly ?string $label;
+
+    /**
+     * Human-readable description captured on the order line.
+     *
+     * Optional response field. PHP type: `string|null`; wire field: `description` (`string`).
+     *
+     * @var string|null
+     */
     public readonly ?string $description;
 
     /** @param array<string, mixed> $data */
