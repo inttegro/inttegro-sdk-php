@@ -15,7 +15,8 @@
     },
     "files": [
       "src/Inttegro/ErrorReporting.php",
-      "src/Inttegro/Errors.php"
+      "src/Inttegro/Errors.php",
+      "src/Inttegro/Search.php"
     ]
   },
   "require": {
