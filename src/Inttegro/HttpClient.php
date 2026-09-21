@@ -313,7 +313,7 @@ class HttpClient
             : $pathOrUrl;
         $parts = array_values(array_filter(explode('/', trim($path, '/')), static fn($part) => $part !== ''));
         $action = $parts[count($parts) - 1] ?? '';
-        return !in_array($action, ['', 'lookup', 'page', 'settings', 'countries', 'contents', 'balances', 'render_preview'], true);
+        return !in_array($action, ['', 'lookup', 'page', 'search', 'settings', 'countries', 'contents', 'balances', 'render_preview'], true);
     }
 
     private function hasHeader(array $headers, string $name): bool

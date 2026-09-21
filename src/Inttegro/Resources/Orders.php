@@ -425,6 +425,12 @@ class Orders
         return $this->http->postResource('/orders/page', Page::class, 'page', $payload);
     }
 
+    /** Search orders with a typed resource-local query. */
+    public function search(\Inttegro\ResourceSearchRequest $payload): \Inttegro\ResourceSearchPage
+    {
+        return $this->http->postResource('/orders/search', \Inttegro\ResourceSearchPage::class, 'search', $payload->toArray());
+    }
+
     private function stableOrderRequestMeta(string $action, string $orderId): array
     {
         return ['idempotency_key' => sprintf('orders_%s_%s', $action, $orderId)];

@@ -185,6 +185,12 @@ class Payouts
         return $this->http->postResource('/payouts/page', \Inttegro\Payout\Page::class, 'page', $payload->toArray());
     }
 
+    /** Search payouts with a typed resource-local query. */
+    public function search(\Inttegro\ResourceSearchRequest $payload): \Inttegro\ResourceSearchPage
+    {
+        return $this->http->postResource('/payouts/search', \Inttegro\ResourceSearchPage::class, 'search', $payload->toArray());
+    }
+
     /**
      * Schedule a payout to a financial account.
      *

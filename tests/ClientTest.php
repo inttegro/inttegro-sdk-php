@@ -266,6 +266,7 @@ final class ClientTest extends TestCase
         $this->assertSame('mtn', MobileMoneyNetwork::MTN->value);
         $this->assertSame('ghs', Currency::GHS->value);
         $this->assertSame('requested_by_customer', Reason::RequestedByCustomer->value);
+        $this->assertSame('sign_in', \Inttegro\Otp\Purpose::SignIn->value);
         $this->assertSame('{"status":"pending"}', json_encode(['status' => Status::Pending]));
     }
 
@@ -765,7 +766,7 @@ final class ClientTest extends TestCase
             'sender' => 'Acme',
             'service_name' => 'Acme Bank',
             'idempotency_key' => 'otp_login_1700000000',
-            'purpose' => 'login',
+            'purpose' => 'sign_in',
         ]);
         $client->otp->verify(['transaction_id' => 'txn_1', 'recipient' => '+233', 'token' => '123456']);
         $client->otp->lookup(['transaction_id' => 'txn_1']);
@@ -951,6 +952,24 @@ final class ClientTest extends TestCase
         $requests = [];
         $adapter = function ($method, $url, $headers, $payload) use (&$requests) {
             $requests[] = compact('method', 'url', 'headers', 'payload');
+            if (str_ends_with($url, '/orders/search')) {
+                return [
+                    'status' => 200,
+                    'body' => json_encode(['search' => [
+                        'resource_types' => ['order'],
+                        'sort' => ['field' => 'relevance', 'direction' => 'desc'],
+                        'page_size' => 20,
+                        'result_count' => 0,
+                        'has_more' => false,
+                        'total' => ['value' => 0, 'relation' => 'exact'],
+                        'resource_totals' => [],
+                        'results' => [],
+                        'facets' => [],
+                        'freshness' => ['state' => 'current'],
+                    ]]),
+                    'headers' => ['content-type' => 'application/json'],
+                ];
+            }
             return [
                 'status' => 200,
                 'body' => json_encode(['order' => [
@@ -964,10 +983,13 @@ final class ClientTest extends TestCase
 
         $client = new Client('test-key', 'https://api.inttegro.com', 5, $adapter);
         $client->orders->lookup('or_1');
+        $client->orders->search(new \Inttegro\ResourceSearchRequest(text: 'tea'));
 
-        $body = json_decode($requests[0]['payload'], true);
-        $this->assertArrayNotHasKey('request_meta', $body);
-        $this->assertArrayNotHasKey('idempotency_key', $body);
+        foreach ($requests as $request) {
+            $body = json_decode($request['payload'], true);
+            $this->assertArrayNotHasKey('request_meta', $body);
+            $this->assertArrayNotHasKey('idempotency_key', $body);
+        }
     }
 
     public function test_message_templates_create_uses_request_meta_idempotency_by_default(): void

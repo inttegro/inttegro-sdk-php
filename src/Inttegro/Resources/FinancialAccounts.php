@@ -232,6 +232,12 @@ class FinancialAccounts
         return $this->http->postResource('/financial_accounts/page', \Inttegro\FinancialAccount\Page::class, 'page', $payload);
     }
 
+    /** Search financial accounts with a typed resource-local query. */
+    public function search(\Inttegro\ResourceSearchRequest $payload): \Inttegro\ResourceSearchPage
+    {
+        return $this->http->postResource('/financial_accounts/search', \Inttegro\ResourceSearchPage::class, 'search', $payload->toArray());
+    }
+
     /**
      * Verify a financial account to enable payout operations.
      *

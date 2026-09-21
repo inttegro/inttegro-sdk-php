@@ -82,6 +82,12 @@ class Customers
         return $this->http->postResource('/customers/page', \Inttegro\Customer\Page::class, 'page', $payload);
     }
 
+    /** Search customer profiles with a typed resource-local query. */
+    public function search(\Inttegro\ResourceSearchRequest $payload): \Inttegro\ResourceSearchPage
+    {
+        return $this->http->postResource('/customers/search', \Inttegro\ResourceSearchPage::class, 'search', $payload->toArray());
+    }
+
     /**
      * @param \Inttegro\DomainValue|array<string, mixed> $payload
      * @return array<string, mixed>

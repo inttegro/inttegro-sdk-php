@@ -149,4 +149,10 @@ class Products
     {
         return $this->http->postResource('/products/page', \Inttegro\Product\Page::class, 'page', $payload);
     }
+
+    /** Search products with a typed resource-local query. */
+    public function search(\Inttegro\ResourceSearchRequest $payload): \Inttegro\ResourceSearchPage
+    {
+        return $this->http->postResource('/products/search', \Inttegro\ResourceSearchPage::class, 'search', $payload->toArray());
+    }
 }
