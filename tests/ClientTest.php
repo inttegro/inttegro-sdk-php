@@ -36,6 +36,27 @@ use OpenTelemetry\Context\ScopeInterface;
 
 final class ClientTest extends TestCase
 {
+    public function test_payout_decodes_balance_transaction_contributions(): void
+    {
+        $payout = \Inttegro\Payout\Payout::fromArray([
+            'id' => 'po_1',
+            'destination_id' => 'fa_1',
+            'execute_after' => '2026-09-02T12:00:00Z',
+            'initiated_at' => '2026-09-02T11:00:00Z',
+            'max_amount' => ['currency' => 'ghs', 'value' => 5000],
+            'status' => 'processing',
+            'balance_transactions' => [[
+                'id' => 'bt_1',
+                'amount' => ['currency' => 'ghs', 'value' => 5000],
+                'allocated_amount' => ['currency' => 'ghs', 'value' => 2000],
+            ]],
+        ]);
+
+        self::assertSame('bt_1', $payout->balanceTransactions[0]->id);
+        self::assertSame(5000, $payout->balanceTransactions[0]->amount->value);
+        self::assertSame(2000, $payout->balanceTransactions[0]->allocatedAmount->value);
+    }
+
     private const UUID_V7_REGEX = '/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i';
     private const EXTERNALLY_SUPPLIED_CAPABILITY_PATHS = [
         '/file_links/open',

@@ -26,6 +26,22 @@ final class BalanceTransaction extends \Inttegro\DomainValue
     public readonly \Inttegro\BalanceTransaction\Amount $amount;
 
     /**
+     * All pending and completed allocations; released entries are omitted.
+     * PHP type: `list<PayoutAllocation|RefundAllocation>`; wire field: `allocations` (`array`).
+     * @var list<PayoutAllocation|RefundAllocation>
+     */
+    public readonly array $allocations;
+
+    /** Amount still available. PHP type: `Amount|null`; wire field: `available_amount` (`object`). */
+    public readonly ?\Inttegro\BalanceTransaction\Amount $availableAmount;
+
+    /** Amount reserved by unresolved work. PHP type: `Amount|null`; wire field: `pending_amount` (`object`). */
+    public readonly ?\Inttegro\BalanceTransaction\Amount $pendingAmount;
+
+    /** Permanently consumed amount. PHP type: `Amount|null`; wire field: `spent_amount` (`object`). */
+    public readonly ?\Inttegro\BalanceTransaction\Amount $spentAmount;
+
+    /**
      * Time at which the funds become available.
      *
      * Optional response field. PHP type: `DateTimeImmutable|null`; wire field: `available_at`
@@ -97,10 +113,11 @@ final class BalanceTransaction extends \Inttegro\DomainValue
     public readonly ?string $paymentId;
 
     /**
-     * Identifier of the related payout.
+     * Legacy payout that claimed this whole transaction.
      *
      * Optional response field. PHP type: `string|null`; wire field: `payout_id` (`string`).
      *
+     * @deprecated Inspect allocations because one transaction can fund many payouts.
      * @var string|null
      */
     public readonly ?string $payoutId;
@@ -142,6 +159,10 @@ final class BalanceTransaction extends \Inttegro\DomainValue
     public function __construct(array $data)
     {
         $this->amount = \Inttegro\ValueHydrator::object($data['amount'] ?? null, [\Inttegro\BalanceTransaction\Amount::class], false);
+	$this->allocations = \Inttegro\ValueHydrator::objects($data['allocations'] ?? null, [PayoutAllocation::class, RefundAllocation::class]);
+	$this->availableAmount = \Inttegro\ValueHydrator::object($data['available_amount'] ?? null, [\Inttegro\BalanceTransaction\Amount::class], true);
+	$this->pendingAmount = \Inttegro\ValueHydrator::object($data['pending_amount'] ?? null, [\Inttegro\BalanceTransaction\Amount::class], true);
+	$this->spentAmount = \Inttegro\ValueHydrator::object($data['spent_amount'] ?? null, [\Inttegro\BalanceTransaction\Amount::class], true);
         $this->availableAt = \Inttegro\ValueHydrator::dateTime($data['available_at'] ?? null, true);
         $this->claimedAt = \Inttegro\ValueHydrator::dateTime($data['claimed_at'] ?? null, true);
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
