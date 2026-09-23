@@ -26,12 +26,12 @@ final class Payout extends \Inttegro\DomainValue
     public readonly ?Amount $amount;
 
     /**
-     * Balance transaction IDs linked to this payout.
+     * Balance transactions that contributed to this payout.
      *
-     * Optional response field. PHP type: `list<string>|null`; wire field: `balance_transactions`
-     * (`array<string>`).
+     * Optional response field. PHP type: `list<BalanceTransaction>|null`; wire field:
+     * `balance_transactions` (`array<object>`).
      *
-     * @var list<string>|null
+     * @var list<BalanceTransaction>|null
      */
     public readonly ?array $balanceTransactions;
 
@@ -243,7 +243,12 @@ final class Payout extends \Inttegro\DomainValue
     public function __construct(array $data)
     {
         $this->amount = \Inttegro\ValueHydrator::object($data['amount'] ?? null, [Amount::class], true);
-        $this->balanceTransactions = \Inttegro\ValueHydrator::array($data['balance_transactions'] ?? null, true);
+        $this->balanceTransactions = !isset($data['balance_transactions'])
+            ? null
+            : \Inttegro\ValueHydrator::objects(
+                $data['balance_transactions'],
+                [BalanceTransaction::class],
+            );
         $this->canceledAt = \Inttegro\ValueHydrator::dateTime($data['canceled_at'] ?? null, true);
         $this->customData = !isset($data['custom_data'])
             ? null
