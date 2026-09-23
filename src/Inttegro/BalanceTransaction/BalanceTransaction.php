@@ -86,11 +86,11 @@ final class BalanceTransaction extends \Inttegro\DomainValue
     /**
      * Identifier of the related order.
      *
-     * Required response field. PHP type: `string`; wire field: `order_id` (`string`).
+     * Optional for payout debits. PHP type: `string|null`; wire field: `order_id` (`string`).
      *
-     * @var string
+     * @var string|null
      */
-    public readonly string $orderId;
+    public readonly ?string $orderId;
 
     /**
      * Time at which payment completed.
@@ -113,11 +113,10 @@ final class BalanceTransaction extends \Inttegro\DomainValue
     public readonly ?string $paymentId;
 
     /**
-     * Legacy payout that claimed this whole transaction.
+     * Payout source for a payout debit, or the legacy whole-payment claim.
      *
      * Optional response field. PHP type: `string|null`; wire field: `payout_id` (`string`).
      *
-     * @deprecated Inspect allocations because one transaction can fund many payouts.
      * @var string|null
      */
     public readonly ?string $payoutId;
@@ -167,7 +166,7 @@ final class BalanceTransaction extends \Inttegro\DomainValue
         $this->claimedAt = \Inttegro\ValueHydrator::dateTime($data['claimed_at'] ?? null, true);
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
-        $this->orderId = \Inttegro\ValueHydrator::string($data['order_id'] ?? null, false);
+        $this->orderId = \Inttegro\ValueHydrator::string($data['order_id'] ?? null, true);
         $this->paidAt = \Inttegro\ValueHydrator::dateTime($data['paid_at'] ?? null, true);
         $this->paymentId = \Inttegro\ValueHydrator::string($data['payment_id'] ?? null, true);
         $this->payoutId = \Inttegro\ValueHydrator::string($data['payout_id'] ?? null, true);

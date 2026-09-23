@@ -23,4 +23,11 @@ enum Type: string
      * Wire value: `refund`.
      */
     case Refund = 'refund';
+
+    /**
+     * Selects the immutable successful-payout debit value.
+     *
+     * Wire value: `payout`.
+     */
+    case Payout = 'payout';
 }

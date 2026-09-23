@@ -36,6 +36,13 @@ final class Payout extends \Inttegro\DomainValue
     public readonly ?array $balanceTransactions;
 
     /**
+     * The payout's own immutable debit balance transaction ID.
+     *
+     * Optional response field. PHP type: `string|null`; wire field: `balance_transaction_id`
+     */
+    public readonly ?string $balanceTransactionId;
+
+    /**
      * When the payout was canceled.
      *
      * Optional response field. PHP type: `DateTimeImmutable|null`; wire field: `canceled_at`
@@ -249,6 +256,7 @@ final class Payout extends \Inttegro\DomainValue
                 $data['balance_transactions'],
                 [BalanceTransaction::class],
             );
+        $this->balanceTransactionId = \Inttegro\ValueHydrator::string($data['balance_transaction_id'] ?? null, true);
         $this->canceledAt = \Inttegro\ValueHydrator::dateTime($data['canceled_at'] ?? null, true);
         $this->customData = !isset($data['custom_data'])
             ? null
