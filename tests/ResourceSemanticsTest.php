@@ -64,11 +64,26 @@ final class ResourceSemanticsTest extends TestCase
         $customer = Customer::fromArray([
             'created_at' => '2026-09-16T06:00:00Z',
             'custom_data' => ['segment' => 'founder'],
+            'fingerprint' => 'cfp_v1_app_buyer',
             'guest' => false,
             'id' => 'cu_123',
             'name' => 'Ama Mensah',
         ]);
         self::assertInstanceOf(CustomData::class, $customer->customData);
+    }
+
+    public function testCustomerFingerprintIsRequiredAndRoundTrips(): void
+    {
+        $base = [
+            'created_at' => '2026-09-16T06:00:00Z',
+            'fingerprint' => 'cfp_v1_app_buyer',
+            'guest' => false,
+            'id' => 'cu_123',
+            'name' => 'Ama Mensah',
+        ];
+        $customer = Customer::fromArray($base);
+        self::assertSame('cfp_v1_app_buyer', $customer->fingerprint);
+        self::assertSame('cfp_v1_app_buyer', $customer->toArray()['fingerprint']);
     }
 
     public function testPayoutRequestsExposeKnownFieldsStatically(): void
