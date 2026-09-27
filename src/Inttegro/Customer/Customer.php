@@ -67,7 +67,11 @@ final class Customer extends \Inttegro\DomainValue
      */
     public readonly ?string $emailAddress;
 
-    /** Application-scoped value for spotting possible duplicate customer records. */
+    /**
+     * Application-scoped value for spotting possible duplicate customer records.
+     *
+     * Required response field. PHP type: `string`; wire field: `fingerprint` (`string`).
+     */
     public readonly string $fingerprint;
 
     /**
