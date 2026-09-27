@@ -67,6 +67,9 @@ final class Customer extends \Inttegro\DomainValue
      */
     public readonly ?string $emailAddress;
 
+    /** Application-scoped value for spotting possible duplicate customer records. */
+    public readonly string $fingerprint;
+
     /**
      * Guest value for this customer.
      *
@@ -165,6 +168,7 @@ final class Customer extends \Inttegro\DomainValue
             ? null
             : \Inttegro\CustomData::fromArray(is_array($data['custom_data']) ? $data['custom_data'] : []);
         $this->emailAddress = \Inttegro\ValueHydrator::string($data['email_address'] ?? null, true);
+        $this->fingerprint = \Inttegro\ValueHydrator::string($data['fingerprint'] ?? null, false);
         $this->guest = \Inttegro\ValueHydrator::bool($data['guest'] ?? null, false);
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
         $this->name = \Inttegro\ValueHydrator::string($data['name'] ?? null, false);
