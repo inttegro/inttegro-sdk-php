@@ -52,7 +52,7 @@ final class Price extends \Inttegro\DomainValue
      */
     public readonly bool $active;
 
-    /** Required price definition discriminator. */
+    /** Required. PHP type: `Type`; wire field: `type` (`string`). */
     public readonly Type $type;
 
     /**
@@ -64,10 +64,10 @@ final class Price extends \Inttegro\DomainValue
      */
     public readonly ?Amount $nominal;
 
-    /** Fixed price amount, present only for fixed prices. */
+    /** Optional. PHP type: `Amount|null`; wire field: `fixed_amount` (`object`). */
     public readonly ?Amount $fixedAmount;
 
-    /** Selection policy, present only for customer-selected prices. */
+    /** Optional. PHP type: `CustomerSelectedAmount|null`; wire field: `customer_selected_amount` (`object`). */
     public readonly ?CustomerSelectedAmount $customerSelectedAmount;
 
     /**

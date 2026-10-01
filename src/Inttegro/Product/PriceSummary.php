@@ -44,16 +44,16 @@ final class PriceSummary extends \Inttegro\DomainValue
      */
     public readonly ?string $label;
 
-    /**
-     * Price amount.
-     *
-     * Required response field. PHP type: `Amount`; wire field: `nominal` (`object`).
-     *
-     * @var Amount
-     */
+    /** Required. PHP type: `PriceType`; wire field: `type` (`string`). */
     public readonly PriceType $type;
+
+    /** Optional deprecated alias. PHP type: `Amount|null`; wire field: `nominal` (`object`). */
     public readonly ?Amount $nominal;
+
+    /** Optional. PHP type: `Amount|null`; wire field: `fixed_amount` (`object`). */
     public readonly ?Amount $fixedAmount;
+
+    /** Optional. PHP type: `CustomerSelectedAmount|null`; wire field: `customer_selected_amount` (`object`). */
     public readonly ?CustomerSelectedAmount $customerSelectedAmount;
 
     /**

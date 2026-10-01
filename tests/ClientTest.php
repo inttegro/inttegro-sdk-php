@@ -672,6 +672,14 @@ final class ClientTest extends TestCase
                 '/purchase_intents/page' => [
                     'page' => ['number' => 1, 'size' => 0, 'purchase_intents' => []],
                 ],
+                '/products/add_price', '/prices/archive' => ['price' => [
+                    'id' => 'pr_1',
+                    'active' => true,
+                    'type' => 'fixed_amount',
+                    'fixed_amount' => ['currency' => 'ghs', 'value' => 5000],
+                    'nominal' => ['currency' => 'ghs', 'value' => 5000],
+                    'created_at' => '2026-09-10T10:00:00Z',
+                ]],
                 '/keys/usage' => [
                     'key' => ['issued_at' => '2026-09-10T10:00:00Z'],
                     'usage' => [],

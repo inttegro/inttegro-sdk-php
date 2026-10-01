@@ -34,9 +34,9 @@ final class Params extends \Inttegro\DomainValue
         public readonly ?string $label = null,
         /** Optional. PHP type: `string|null`; wire field: `about` (`string`). */
         public readonly ?string $about = null,
-        /** Required for a typed fixed price. */
+        /** Required for fixed prices. PHP type: `AmountParams|null`; wire field: `fixed_amount` (`object`). */
         public readonly ?AmountParams $fixedAmount = null,
-        /** Required for a customer-selected price. */
+        /** Required for selected prices. PHP type: `CustomerSelectedAmountParams|null`; wire field: `customer_selected_amount` (`object`). */
         public readonly ?CustomerSelectedAmountParams $customerSelectedAmount = null,
     ) {
         $fixed = $this->type === Type::FixedAmount && $this->fixedAmount !== null && $this->customerSelectedAmount === null;
