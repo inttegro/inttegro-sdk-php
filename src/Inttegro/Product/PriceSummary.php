@@ -3,6 +3,8 @@
 namespace Inttegro\Product;
 
 use Inttegro\Money\Amount;
+use Inttegro\Price\CustomerSelectedAmount;
+use Inttegro\Price\Type as PriceType;
 
 /**
  * Price Summary details associated with product.
@@ -49,7 +51,10 @@ final class PriceSummary extends \Inttegro\DomainValue
      *
      * @var Amount
      */
-    public readonly Amount $nominal;
+    public readonly PriceType $type;
+    public readonly ?Amount $nominal;
+    public readonly ?Amount $fixedAmount;
+    public readonly ?CustomerSelectedAmount $customerSelectedAmount;
 
     /**
      * Hydrates a PriceSummary from decoded Inttegro API data.
@@ -61,7 +66,10 @@ final class PriceSummary extends \Inttegro\DomainValue
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
         $this->active = \Inttegro\ValueHydrator::bool($data['active'] ?? null, false);
         $this->label = \Inttegro\ValueHydrator::string($data['label'] ?? null, true);
-        $this->nominal = \Inttegro\ValueHydrator::object($data['nominal'] ?? null, [Amount::class], false);
+        $this->type = PriceType::from(\Inttegro\ValueHydrator::string($data['type'] ?? null, false));
+        $this->nominal = \Inttegro\ValueHydrator::object($data['nominal'] ?? null, [Amount::class], true);
+        $this->fixedAmount = \Inttegro\ValueHydrator::object($data['fixed_amount'] ?? null, [Amount::class], true);
+        $this->customerSelectedAmount = \Inttegro\ValueHydrator::object($data['customer_selected_amount'] ?? null, [CustomerSelectedAmount::class], true);
     }
 
     /**

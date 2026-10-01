@@ -233,7 +233,8 @@ $client->customers->page(['page_number' => 1]);
 $client->products->create(['type' => 'physical', 'name' => 'Product']);
 $client->products->addPrice([
     'product_id' => 'prod_1',
-    'amount' => ['currency' => 'ghs', 'value' => 5000],
+    'type' => 'fixed_amount',
+    'fixed_amount' => ['currency' => 'ghs', 'value' => 5000],
     'set_as_default' => true,
 ]);
 $client->products->setDefaultUnitPrice(['product_id' => 'prod_1', 'price_id' => 'pr_1']);

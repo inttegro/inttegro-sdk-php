@@ -52,6 +52,9 @@ final class Price extends \Inttegro\DomainValue
      */
     public readonly bool $active;
 
+    /** Required price definition discriminator. */
+    public readonly Type $type;
+
     /**
      * Price amount.
      *
@@ -59,7 +62,13 @@ final class Price extends \Inttegro\DomainValue
      *
      * @var Amount
      */
-    public readonly Amount $nominal;
+    public readonly ?Amount $nominal;
+
+    /** Fixed price amount, present only for fixed prices. */
+    public readonly ?Amount $fixedAmount;
+
+    /** Selection policy, present only for customer-selected prices. */
+    public readonly ?CustomerSelectedAmount $customerSelectedAmount;
 
     /**
      * Product ID when the operation returns the relationship by reference.
@@ -124,7 +133,10 @@ final class Price extends \Inttegro\DomainValue
         $this->label = \Inttegro\ValueHydrator::string($data['label'] ?? null, true);
         $this->about = \Inttegro\ValueHydrator::string($data['about'] ?? null, true);
         $this->active = \Inttegro\ValueHydrator::bool($data['active'] ?? null, false);
-        $this->nominal = \Inttegro\ValueHydrator::object($data['nominal'] ?? null, [Amount::class], false);
+        $this->type = Type::from(\Inttegro\ValueHydrator::string($data['type'] ?? null, false));
+        $this->nominal = \Inttegro\ValueHydrator::object($data['nominal'] ?? null, [Amount::class], true);
+        $this->fixedAmount = \Inttegro\ValueHydrator::object($data['fixed_amount'] ?? null, [Amount::class], true);
+        $this->customerSelectedAmount = \Inttegro\ValueHydrator::object($data['customer_selected_amount'] ?? null, [CustomerSelectedAmount::class], true);
         $this->productId = \Inttegro\ValueHydrator::string($data['product_id'] ?? null, true);
         $this->product = \Inttegro\ValueHydrator::object($data['product'] ?? null, [\Inttegro\Price\EmbeddedProduct::class], true);
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);

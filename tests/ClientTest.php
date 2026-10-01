@@ -326,11 +326,17 @@ final class ClientTest extends TestCase
     {
         $amount = new AmountParams(Currency::GHS, 3005);
         $price = new InlineParams(Currency::USD, 1200);
-        $catalogParams = new Params($amount, label: 'Retail');
+        $catalogParams = new Params(
+            type: \Inttegro\Price\Type::FixedAmount,
+            label: 'Retail',
+            fixedAmount: $amount,
+        );
         $catalogPrice = Price::fromArray([
             'id' => 'pr_123',
             'active' => true,
+            'type' => 'fixed_amount',
             'nominal' => ['currency' => 'ghs', 'value' => 3005],
+            'fixed_amount' => ['currency' => 'ghs', 'value' => 3005],
             'product_id' => 'prod_123',
             'created_at' => '2026-09-02T12:00:00Z',
         ]);
@@ -339,13 +345,62 @@ final class ClientTest extends TestCase
         $this->assertSame(['currency' => 'ghs', 'value' => 3005], $amount->toArray());
         $this->assertSame(['currency' => 'usd', 'value' => 1200], $price->toArray());
         $this->assertSame([
-            'amount' => ['currency' => 'ghs', 'value' => 3005],
+            'type' => 'fixed_amount',
             'label' => 'Retail',
+            'fixed_amount' => ['currency' => 'ghs', 'value' => 3005],
         ], $catalogParams->toArray());
+        $productPrice = new \Inttegro\Product\AddPriceRequest(
+            productId: 'prod_123',
+            type: \Inttegro\Price\Type::FixedAmount,
+            fixedAmount: $amount,
+        );
+        $this->assertSame([
+            'product_id' => 'prod_123',
+            'type' => 'fixed_amount',
+            'fixed_amount' => ['currency' => 'ghs', 'value' => 3005],
+        ], $productPrice->toArray());
         $this->assertInstanceOf(Amount::class, $catalogPrice->nominal);
         $this->assertSame(Currency::GHS, $catalogPrice->nominal->currency);
         $this->assertSame('prod_123', $catalogPrice->productId);
         $this->assertSame(Currency::EUR, $inlinePrice->currency);
+
+        $selectedParams = new Params(
+            productId: 'prod_donation',
+            type: \Inttegro\Price\Type::CustomerSelectedAmount,
+            customerSelectedAmount: new \Inttegro\Price\CustomerSelectedAmountParams(
+                Currency::GHS,
+                500,
+                suggestedAmounts: [
+                    new \Inttegro\Price\SuggestedAmountParams('supporter', 1000, true),
+                ],
+            ),
+        );
+        $this->assertSame('customer_selected_amount', $selectedParams->toArray()['type']);
+        $this->assertSame(1000, $selectedParams->toArray()['customer_selected_amount']['suggested_amounts'][0]['value']);
+
+        $selectedPrice = Price::fromArray([
+            'id' => 'pr_donation',
+            'active' => true,
+            'type' => 'customer_selected_amount',
+            'customer_selected_amount' => [
+                'currency' => 'ghs',
+                'minimum' => 500,
+            ],
+            'product_id' => 'prod_donation',
+            'created_at' => '2026-10-01T12:00:00Z',
+        ]);
+        $this->assertNull($selectedPrice->nominal);
+        $this->assertSame(500, $selectedPrice->customerSelectedAmount?->minimum);
+
+        $catalogProduct = new \Inttegro\Product\CatalogWithCustomerSelectedPrice(
+            'prod_donation',
+            new \Inttegro\Product\CustomerSelectedPriceInput(
+                'pr_donation',
+                new AmountParams(Currency::GHS, 750),
+            ),
+            1,
+        );
+        $this->assertSame('pr_donation', $catalogProduct->toArray()['customer_selected_price']['price_id']);
     }
 
     public function test_financial_account_variants_have_focused_namespaces(): void
@@ -732,7 +787,8 @@ final class ClientTest extends TestCase
         $client->products->create(['type' => 'physical', 'name' => 'Product']);
         $client->products->addPrice([
             'product_id' => 'prod_1',
-            'amount' => ['currency' => 'ghs', 'value' => 5000],
+            'type' => 'fixed_amount',
+            'fixed_amount' => ['currency' => 'ghs', 'value' => 5000],
             'set_as_default' => true,
         ]);
         $client->products->setDefaultUnitPrice(['product_id' => 'prod_1', 'price_id' => 'pr_1']);
