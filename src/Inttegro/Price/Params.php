@@ -20,21 +20,31 @@ final class Params extends \Inttegro\DomainValue
      *
      * Nullable properties are omitted by `toArray()` so the API can apply its defaults.
      *
-     * @param AmountParams $amount Required price amount. Wire field: `amount` (`object`).
-     * @param string|null $productId Optional product ID. Wire field: `product_id` (`string`).
+     * @param Type $type Required price definition discriminator. Wire field: `type` (`string`).
+     * @param string|null $productId Optional for fixed prices and required for customer-selected prices. Wire field: `product_id` (`string`).
      * @param string|null $label Optional customer-facing label. Wire field: `label` (`string`).
      * @param string|null $about Optional explanatory text. Wire field: `about` (`string`).
      */
     public function __construct(
-        /** Required. PHP type: `AmountParams`; wire field: `amount` (`object`). */
-        public readonly AmountParams $amount,
+        /** Required. PHP type: `Type`; wire field: `type` (`string`). */
+        public readonly Type $type,
         /** Optional. PHP type: `string|null`; wire field: `product_id` (`string`). */
         public readonly ?string $productId = null,
         /** Optional. PHP type: `string|null`; wire field: `label` (`string`). */
         public readonly ?string $label = null,
         /** Optional. PHP type: `string|null`; wire field: `about` (`string`). */
         public readonly ?string $about = null,
-    ) {}
+        /** Required for fixed prices. PHP type: `AmountParams|null`; wire field: `fixed_amount` (`object`). */
+        public readonly ?AmountParams $fixedAmount = null,
+        /** Required for selected prices. PHP type: `CustomerSelectedAmountParams|null`; wire field: `customer_selected_amount` (`object`). */
+        public readonly ?CustomerSelectedAmountParams $customerSelectedAmount = null,
+    ) {
+        $fixed = $this->type === Type::FixedAmount && $this->fixedAmount !== null && $this->customerSelectedAmount === null;
+        $selected = $this->type === Type::CustomerSelectedAmount && $this->customerSelectedAmount !== null && $this->fixedAmount === null && $this->productId !== null && $this->productId !== '';
+        if ((int) $fixed + (int) $selected !== 1) {
+            throw new \InvalidArgumentException('Provide exactly one valid catalog price definition.');
+        }
+    }
 
     /**
      * Creates a Params from its decoded API wire representation.
@@ -44,13 +54,17 @@ final class Params extends \Inttegro\DomainValue
      */
     public static function fromArray(array $data): static
     {
-        $amount = $data['amount'] ?? [];
+        $type = $data['type'] ?? null;
+        $fixedAmount = $data['fixed_amount'] ?? null;
+        $selectedAmount = $data['customer_selected_amount'] ?? null;
 
         return new static(
-            $amount instanceof AmountParams ? $amount : AmountParams::fromArray(is_array($amount) ? $amount : []),
+            $type instanceof Type ? $type : Type::from((string) $type),
             isset($data['product_id']) ? (string) $data['product_id'] : null,
             isset($data['label']) ? (string) $data['label'] : null,
             isset($data['about']) ? (string) $data['about'] : null,
+            $fixedAmount instanceof AmountParams ? $fixedAmount : (is_array($fixedAmount) ? AmountParams::fromArray($fixedAmount) : null),
+            $selectedAmount instanceof CustomerSelectedAmountParams ? $selectedAmount : (is_array($selectedAmount) ? CustomerSelectedAmountParams::fromArray($selectedAmount) : null),
         );
     }
 

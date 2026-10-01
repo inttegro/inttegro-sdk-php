@@ -44,12 +44,17 @@ class Products
      * Sends the documented request through the shared authenticated transport and hydrates the
      * successful response into the declared return type.
      *
-     * @param array<string, mixed> $payload Request fields keyed by the documented `snake_case` API names.
+     * @param array<string, mixed>|\Inttegro\Product\AddPriceRequest $payload Price definition for this product.
      * @return \Inttegro\Price\Price The resulting price.
      */
-    public function addPrice(array $payload): \Inttegro\Price\Price
+    public function addPrice(array|\Inttegro\Product\AddPriceRequest $payload): \Inttegro\Price\Price
     {
-        return $this->http->postResource('/products/add_price', \Inttegro\Price\Price::class, 'price', $payload);
+        return $this->http->postResource(
+            '/products/add_price',
+            \Inttegro\Price\Price::class,
+            'price',
+            $payload instanceof \Inttegro\Product\AddPriceRequest ? $payload->toArray() : $payload,
+        );
     }
 
     /**

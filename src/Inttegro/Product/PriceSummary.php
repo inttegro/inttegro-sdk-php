@@ -3,6 +3,8 @@
 namespace Inttegro\Product;
 
 use Inttegro\Money\Amount;
+use Inttegro\Price\CustomerSelectedAmount;
+use Inttegro\Price\Type as PriceType;
 
 /**
  * Price Summary details associated with product.
@@ -42,14 +44,17 @@ final class PriceSummary extends \Inttegro\DomainValue
      */
     public readonly ?string $label;
 
-    /**
-     * Price amount.
-     *
-     * Required response field. PHP type: `Amount`; wire field: `nominal` (`object`).
-     *
-     * @var Amount
-     */
-    public readonly Amount $nominal;
+    /** Required. PHP type: `PriceType`; wire field: `type` (`string`). */
+    public readonly PriceType $type;
+
+    /** Optional deprecated alias. PHP type: `Amount|null`; wire field: `nominal` (`object`). */
+    public readonly ?Amount $nominal;
+
+    /** Optional. PHP type: `Amount|null`; wire field: `fixed_amount` (`object`). */
+    public readonly ?Amount $fixedAmount;
+
+    /** Optional. PHP type: `CustomerSelectedAmount|null`; wire field: `customer_selected_amount` (`object`). */
+    public readonly ?CustomerSelectedAmount $customerSelectedAmount;
 
     /**
      * Hydrates a PriceSummary from decoded Inttegro API data.
@@ -61,7 +66,10 @@ final class PriceSummary extends \Inttegro\DomainValue
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
         $this->active = \Inttegro\ValueHydrator::bool($data['active'] ?? null, false);
         $this->label = \Inttegro\ValueHydrator::string($data['label'] ?? null, true);
-        $this->nominal = \Inttegro\ValueHydrator::object($data['nominal'] ?? null, [Amount::class], false);
+        $this->type = PriceType::from(\Inttegro\ValueHydrator::string($data['type'] ?? null, false));
+        $this->nominal = \Inttegro\ValueHydrator::object($data['nominal'] ?? null, [Amount::class], true);
+        $this->fixedAmount = \Inttegro\ValueHydrator::object($data['fixed_amount'] ?? null, [Amount::class], true);
+        $this->customerSelectedAmount = \Inttegro\ValueHydrator::object($data['customer_selected_amount'] ?? null, [CustomerSelectedAmount::class], true);
     }
 
     /**
