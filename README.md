@@ -2,7 +2,8 @@
 
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/inttegro/inttegro-sdk-php/badge)](https://scorecard.dev/viewer/?uri=github.com/inttegro/inttegro-sdk-php)
 
-The official PHP client for building server-side Inttegro integrations.
+Accept GHS payments, present Ghana Mobile Money checkout, and manage orders,
+refunds, and payouts with Inttegro's typed server-side PHP SDK.
 
 [API documentation](https://php.inttegro.dev/) · [Integration guides](https://studio.inttegro.com/sdks/php)
 
