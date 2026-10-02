@@ -1,6 +1,6 @@
 {
   "name": "inttegro/sdk",
-  "description": "Typed PHP SDK for Inttegro GHS checkout and Ghana Mobile Money payments",
+  "description": "Official PHP SDK for the Inttegro API",
   "type": "library",
   "keywords": [
     "checkout",

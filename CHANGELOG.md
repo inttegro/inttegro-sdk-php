@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [11.2.2] - 2026-10-02
+
+- Restored the broad Inttegro API description while retaining searchable
+  Composer metadata.
+
 ## [11.2.1] - 2026-10-02
 
 - Added searchable Composer metadata and clearer GHS checkout and Ghana Mobile
