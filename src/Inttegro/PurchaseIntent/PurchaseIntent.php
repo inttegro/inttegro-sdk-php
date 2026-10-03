@@ -88,7 +88,7 @@ final class PurchaseIntent extends \Inttegro\DomainValue
      */
     public readonly ?\Inttegro\PurchaseIntent\Price $price;
 
-    /** Merchant-authored Buy page presentation settings. */
+    /** Merchant-authored Buy page presentation settings. Wire field: `presentation`. */
     public readonly ?\Inttegro\PurchaseIntent\Presentation $presentation;
 
     /**

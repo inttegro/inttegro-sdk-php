@@ -5,6 +5,7 @@ namespace Inttegro\PurchaseIntent;
 /** Customer-facing presentation settings for a purchase intent. */
 final class Presentation extends \Inttegro\DomainValue
 {
+    /** Hosted Buy-page presentation settings. Wire field: `buy_page`. */
     public readonly ?BuyPagePresentation $buyPage;
 
     /** @param array<string, mixed> $data */

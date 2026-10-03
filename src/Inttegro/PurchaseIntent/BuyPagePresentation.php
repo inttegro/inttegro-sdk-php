@@ -5,6 +5,7 @@ namespace Inttegro\PurchaseIntent;
 /** Presentation settings for the hosted Buy page. */
 final class BuyPagePresentation extends \Inttegro\DomainValue
 {
+    /** Hosted Buy-page text overrides. Wire field: `text`. */
     public readonly ?BuyPageText $text;
 
     /** @param array<string, mixed> $data */
