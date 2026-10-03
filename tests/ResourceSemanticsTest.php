@@ -181,6 +181,11 @@ final class ResourceSemanticsTest extends TestCase
             'allow_variants' => false,
             'created_at' => '2026-09-09T12:00:00Z',
             'id' => 'sale_123',
+            'presentation' => [
+                'buy_page' => [
+                    'text' => ['checkout_section_title' => 'Support this cause'],
+                ],
+            ],
             'quantity' => ['min' => 1],
             'status' => 'used',
             'usage' => [
@@ -207,6 +212,7 @@ final class ResourceSemanticsTest extends TestCase
 
         self::assertTrue($intent->isSingleUse());
         self::assertSame('or_123', $intent->usedOrderId());
+        self::assertSame('Support this cause', $intent->presentation?->buyPage->text->checkoutSectionTitle);
         self::assertTrue($product->isPublished());
         self::assertTrue($product->wasEverPublished());
         self::assertTrue($method->isVerified());

@@ -88,6 +88,9 @@ final class PurchaseIntent extends \Inttegro\DomainValue
      */
     public readonly ?\Inttegro\PurchaseIntent\Price $price;
 
+    /** Merchant-authored Buy page presentation settings. Wire field: `presentation`. */
+    public readonly ?\Inttegro\PurchaseIntent\Presentation $presentation;
+
     /**
      * Product value for this purchase intent.
      *
@@ -166,6 +169,7 @@ final class PurchaseIntent extends \Inttegro\DomainValue
         $this->inactiveAt = \Inttegro\ValueHydrator::dateTime($data['inactive_at'] ?? null, true);
         $this->merchant = \Inttegro\ValueHydrator::object($data['merchant'] ?? null, [\Inttegro\PurchaseIntent\Merchant::class], true);
         $this->price = \Inttegro\ValueHydrator::object($data['price'] ?? null, [\Inttegro\PurchaseIntent\Price::class], true);
+        $this->presentation = \Inttegro\ValueHydrator::object($data['presentation'] ?? null, [\Inttegro\PurchaseIntent\Presentation::class], true);
         $this->product = \Inttegro\ValueHydrator::object($data['product'] ?? null, [\Inttegro\PurchaseIntent\Product::class], true);
         $this->quantity = \Inttegro\ValueHydrator::object($data['quantity'] ?? null, [\Inttegro\PurchaseIntent\Quantity::class], false);
         $this->status = \Inttegro\PurchaseIntent\Status::from(\Inttegro\ValueHydrator::string($data['status'] ?? null, false));

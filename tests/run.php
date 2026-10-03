@@ -47,6 +47,7 @@ function implementedSdkPaths(): array
 
 $clientCheckoutPaths = [
     '/checkout/lookup',
+    '/checkout/select_amount',
     '/checkout/pay',
     '/checkout/request_confirmation',
     '/checkout/confirm_payment',

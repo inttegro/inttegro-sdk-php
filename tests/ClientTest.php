@@ -64,6 +64,7 @@ final class ClientTest extends TestCase
     ];
     private const CLIENT_CHECKOUT_PATHS = [
         '/checkout/lookup',
+        '/checkout/select_amount',
         '/checkout/pay',
         '/checkout/request_confirmation',
         '/checkout/confirm_payment',

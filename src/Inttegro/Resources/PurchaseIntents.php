@@ -27,7 +27,7 @@ class PurchaseIntents
      * Sends the documented request through the shared authenticated transport and hydrates the
      * successful response into the declared return type.
      *
-     * @param array<string, mixed> $payload Request fields keyed by the documented `snake_case` API names.
+     * @param array{product?: array<string, mixed>, product_id?: string, price?: array<string, mixed>, price_id?: string, quantity: array{min: int, max?: int}, usage?: array<string, mixed>, expires_at?: string, presentation?: array{buy_page: array{text: array{checkout_section_title?: string, amount_field_label?: string, primary_action_label?: string}}}} $payload
      * @return \Inttegro\PurchaseIntent\PurchaseIntent The created purchase intent.
      */
     public function create(array $payload): \Inttegro\PurchaseIntent\PurchaseIntent
@@ -41,7 +41,7 @@ class PurchaseIntents
      * Sends the documented request through the shared authenticated transport and hydrates the
      * successful response into the declared return type.
      *
-     * @param array<string, mixed> $payload Request fields keyed by the documented `snake_case` API names.
+     * @param array{id?: string, purchase_intent_id?: string, quantity?: array{min: int, max?: int}, expires_at?: string|null, reactivate?: bool, presentation?: array{buy_page: array{text: array{checkout_section_title?: string|null, amount_field_label?: string|null, primary_action_label?: string|null}}}} $payload
      * @return \Inttegro\PurchaseIntent\PurchaseIntent The updated purchase intent.
      */
     public function update(array $payload): \Inttegro\PurchaseIntent\PurchaseIntent
