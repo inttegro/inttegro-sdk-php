@@ -67,13 +67,14 @@ final class FinancialAccount extends \Inttegro\DomainValue
     public readonly ?string $description;
 
     /**
-     * Application-scoped value for recognizing duplicate financial-account connections.
+     * A stable identifier for the underlying financial account within your application. Use it to
+     * recognize when the same account has been connected more than once.
      *
-     * Optional response field. PHP type: `string|null`; wire field: `fingerprint` (`string`).
+     * Required response field. PHP type: `string`; wire field: `fingerprint` (`string`).
      *
-     * @var string|null
+     * @var string
      */
-    public readonly ?string $fingerprint;
+    public readonly string $fingerprint;
 
     /**
      * Unique identifier for this financial account.
@@ -226,7 +227,7 @@ final class FinancialAccount extends \Inttegro\DomainValue
             ? null
             : \Inttegro\CustomData::fromArray(is_array($data['custom_data']) ? $data['custom_data'] : []);
         $this->description = \Inttegro\ValueHydrator::string($data['description'] ?? null, true);
-        $this->fingerprint = \Inttegro\ValueHydrator::string($data['fingerprint'] ?? null, true);
+        $this->fingerprint = \Inttegro\ValueHydrator::string($data['fingerprint'] ?? null, false);
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
         $this->institution = \Inttegro\ValueHydrator::object($data['institution'] ?? null, [\Inttegro\FinancialAccount\FinancialInstitution::class], true);
         $this->label = \Inttegro\ValueHydrator::string($data['label'] ?? null, true);
