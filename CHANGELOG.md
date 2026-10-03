@@ -1,5 +1,15 @@
 ## [Unreleased]
 
+## [11.2.2] - 2026-10-02
+
+- Restored the broad Inttegro API description while retaining searchable
+  Composer metadata.
+
+## [11.2.1] - 2026-10-02
+
+- Added searchable Composer metadata and clearer GHS checkout and Ghana Mobile
+  Money positioning for developers evaluating the SDK.
+
 ## [11.2.0] - 2026-10-01
 
 - Added typed fixed and customer-selected catalog price definitions, suggested

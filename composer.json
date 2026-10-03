@@ -2,6 +2,16 @@
   "name": "inttegro/sdk",
   "description": "Official PHP SDK for the Inttegro API",
   "type": "library",
+  "keywords": [
+    "checkout",
+    "commerce",
+    "fintech",
+    "ghana",
+    "ghs",
+    "mobile-money",
+    "payments",
+    "sdk"
+  ],
   "license": "MIT",
   "homepage": "https://studio.inttegro.com",
   "support": {
