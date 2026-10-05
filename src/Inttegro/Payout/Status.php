@@ -46,11 +46,11 @@ enum Status: string
     case Succeeded = 'succeeded';
 
     /**
-     * Selects the `invalid` API value for payout status.
+     * The payout could not be completed.
      *
-     * Wire value: `invalid`.
+     * Wire value: `failed`.
      */
-    case Invalid = 'invalid';
+    case Failed = 'failed';
 
     /**
      * The operation was canceled before successful completion.
