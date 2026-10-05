@@ -74,10 +74,10 @@ final class Payout extends \Inttegro\DomainValue
     public readonly string $destinationId;
 
     /**
-     * Public failure details when execution fails.
+     * Deprecated compatibility projection of the terminal failure.
      *
      * Optional response field. PHP type: `\Inttegro\Payout\Error|null`; wire field: `error`
-     * (`object`).
+     * (`object`). Use `$failure` for stable, caller-safe failure information.
      *
      * @var \Inttegro\Payout\Error|null
      */
@@ -124,6 +124,15 @@ final class Payout extends \Inttegro\DomainValue
      * @var DateTimeImmutable|null
      */
     public readonly ?DateTimeImmutable $failedAt;
+
+    /**
+     * Stable failure information when the payout status is `failed`.
+     *
+     * Optional response field. PHP type: `Failure|null`; wire field: `failure` (`object`).
+     *
+     * @var Failure|null
+     */
+    public readonly ?Failure $failure;
 
     /**
      * Unique payout identifier.
@@ -267,6 +276,7 @@ final class Payout extends \Inttegro\DomainValue
         $this->executedBy = \Inttegro\ValueHydrator::string($data['executed_by'] ?? null, true);
         $this->expectedAt = \Inttegro\ValueHydrator::dateTime($data['expected_at'] ?? null, true);
         $this->failedAt = \Inttegro\ValueHydrator::dateTime($data['failed_at'] ?? null, true);
+        $this->failure = \Inttegro\ValueHydrator::object($data['failure'] ?? null, [Failure::class], true);
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
         $this->initiatedAt = \Inttegro\ValueHydrator::dateTime($data['initiated_at'] ?? null, false);
         $this->initiatedBy = \Inttegro\ValueHydrator::string($data['initiated_by'] ?? null, true);

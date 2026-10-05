@@ -44,7 +44,13 @@ final class ClientTest extends TestCase
             'execute_after' => '2026-09-02T12:00:00Z',
             'initiated_at' => '2026-09-02T11:00:00Z',
             'max_amount' => ['currency' => 'ghs', 'value' => 5000],
-            'status' => 'processing',
+            'status' => 'failed',
+            'failed_at' => '2026-09-02T12:05:00Z',
+            'failure' => [
+                'reason' => 'temporarily_unavailable',
+                'detail' => 'Payout processing was temporarily unavailable.',
+                'retryable' => true,
+            ],
             'balance_transactions' => [[
                 'id' => 'bt_1',
                 'amount' => ['currency' => 'ghs', 'value' => 5000],
@@ -55,6 +61,9 @@ final class ClientTest extends TestCase
         self::assertSame('bt_1', $payout->balanceTransactions[0]->id);
         self::assertSame(5000, $payout->balanceTransactions[0]->amount->value);
         self::assertSame(2000, $payout->balanceTransactions[0]->allocatedAmount->value);
+        self::assertSame('failed', $payout->status);
+        self::assertSame(\Inttegro\Payout\FailureReason::TemporarilyUnavailable, $payout->failure->reason);
+        self::assertTrue($payout->failure->retryable);
     }
 
     private const UUID_V7_REGEX = '/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i';
