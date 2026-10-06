@@ -97,6 +97,16 @@ final class Payment extends \Inttegro\DomainValue
     public readonly ?\Inttegro\Order\Customer $customer;
 
     /**
+     * Receipt issued for a paid order payment.
+     *
+     * Optional response field. PHP type: `\Inttegro\Order\Receipt|null`; wire field: `receipt`
+     * (`object`).
+     *
+     * @var \Inttegro\Order\Receipt|null
+     */
+    public readonly ?\Inttegro\Order\Receipt $receipt;
+
+    /**
      * Most recent payment attempt details.
      *
      * Optional response field. PHP type: `\Inttegro\Payment\Attempt|null`; wire field:
@@ -247,6 +257,7 @@ final class Payment extends \Inttegro\DomainValue
         $this->paymentMethod = \Inttegro\ValueHydrator::object($data['payment_method'] ?? null, [\Inttegro\Payment\PaymentMethod::class], true);
         $this->billingDetails = \Inttegro\ValueHydrator::object($data['billing_details'] ?? null, [\Inttegro\Payment\BillingDetails::class], true);
         $this->customer = \Inttegro\ValueHydrator::object($data['customer'] ?? null, [\Inttegro\Order\Customer::class], true);
+        $this->receipt = \Inttegro\ValueHydrator::object($data['receipt'] ?? null, [\Inttegro\Order\Receipt::class], true);
         $this->latestAttempt = \Inttegro\ValueHydrator::object($data['latest_attempt'] ?? null, [\Inttegro\Payment\Attempt::class], true);
         $this->nextAction = \Inttegro\ValueHydrator::object($data['next_action'] ?? null, [\Inttegro\Payment\NextAction::class], true);
         $this->latestError = \Inttegro\ValueHydrator::object($data['latest_error'] ?? null, [\Inttegro\Payment\Error::class], true);

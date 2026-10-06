@@ -35,16 +35,6 @@ final class InvoiceFormat extends \Inttegro\DomainValue
     public readonly \Inttegro\Order\DocumentFormat $pdf;
 
     /**
-     * Receipt value for this invoice format.
-     *
-     * Optional response field. PHP type: `\Inttegro\Order\DocumentFormat|null`; wire field:
-     * `receipt` (`object`).
-     *
-     * @var \Inttegro\Order\DocumentFormat|null
-     */
-    public readonly ?\Inttegro\Order\DocumentFormat $receipt;
-
-    /**
      * Hydrates an InvoiceFormat from decoded Inttegro API data.
      *
      * @param array<string, mixed> $data Wire object keyed by `snake_case` API field names.
@@ -53,7 +43,6 @@ final class InvoiceFormat extends \Inttegro\DomainValue
     {
         $this->web = \Inttegro\ValueHydrator::object($data['web'] ?? null, [\Inttegro\Order\DocumentFormat::class], false);
         $this->pdf = \Inttegro\ValueHydrator::object($data['pdf'] ?? null, [\Inttegro\Order\DocumentFormat::class], false);
-        $this->receipt = \Inttegro\ValueHydrator::object($data['receipt'] ?? null, [\Inttegro\Order\DocumentFormat::class], true);
     }
 
     /**
