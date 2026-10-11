@@ -5,7 +5,7 @@ namespace Inttegro\App;
 use DateTimeImmutable;
 
 /**
- * Relationship receipt for the created child app.
+ * Identifies the created app's direct placement relationship.
  *
  * This immutable value hydrates decoded API `snake_case` data into typed `camelCase` properties.
  * Use `fromArray()` for wire data; `toArray()`, array access, and JSON serialization expose the API
@@ -34,13 +34,14 @@ final class Relationship extends \Inttegro\DomainValue
     public readonly string $kind;
 
     /**
-     * Policy Version value for this relationship.
+     * Application that directly contains this app.
      *
-     * Required response field. PHP type: `string`; wire field: `policy_version` (`string`).
+     * Required response field. PHP type: `\Inttegro\App\RelationshipParent`; wire field:
+     * `parent` (`object`).
      *
-     * @var string
+     * @var \Inttegro\App\RelationshipParent
      */
-    public readonly string $policyVersion;
+    public readonly \Inttegro\App\RelationshipParent $parent;
 
     /**
      * Current lifecycle state.
@@ -50,81 +51,6 @@ final class Relationship extends \Inttegro\DomainValue
      * @var string
      */
     public readonly string $status;
-
-    /**
-     * Identifier of the related actor app.
-     *
-     * Required response field. PHP type: `string`; wire field: `actor_app_id` (`string`).
-     *
-     * @var string
-     */
-    public readonly string $actorAppId;
-
-    /**
-     * Identifier of the related creator app.
-     *
-     * Required response field. PHP type: `string`; wire field: `creator_app_id` (`string`).
-     *
-     * @var string
-     */
-    public readonly string $creatorAppId;
-
-    /**
-     * Identifier of the related placement parent app.
-     *
-     * Required response field. PHP type: `string`; wire field: `placement_parent_app_id`
-     * (`string`).
-     *
-     * @var string
-     */
-    public readonly string $placementParentAppId;
-
-    /**
-     * Identifier of the related subject app.
-     *
-     * Required response field. PHP type: `string`; wire field: `subject_app_id` (`string`).
-     *
-     * @var string
-     */
-    public readonly string $subjectAppId;
-
-    /**
-     * Identifier of the related child app.
-     *
-     * Required response field. PHP type: `string`; wire field: `child_app_id` (`string`).
-     *
-     * @var string
-     */
-    public readonly string $childAppId;
-
-    /**
-     * Child Standing value for this relationship.
-     *
-     * Required response field. PHP type: `string`; wire field: `child_standing` (`string`).
-     *
-     * @var string
-     */
-    public readonly string $childStanding;
-
-    /**
-     * Relationship Policy value for this relationship.
-     *
-     * Required response field. PHP type: `\Inttegro\App\RelationshipPolicy`; wire field:
-     * `relationship_policy` (`object`).
-     *
-     * @var \Inttegro\App\RelationshipPolicy
-     */
-    public readonly \Inttegro\App\RelationshipPolicy $relationshipPolicy;
-
-    /**
-     * Retained Creator Authority Exists value for this relationship.
-     *
-     * Required response field. PHP type: `bool`; wire field: `retained_creator_authority_exists`
-     * (`boolean`).
-     *
-     * @var bool
-     */
-    public readonly bool $retainedCreatorAuthorityExists;
 
     /**
      * Time at which the value was created.
@@ -146,16 +72,8 @@ final class Relationship extends \Inttegro\DomainValue
     {
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
         $this->kind = \Inttegro\ValueHydrator::string($data['kind'] ?? null, false);
-        $this->policyVersion = \Inttegro\ValueHydrator::string($data['policy_version'] ?? null, false);
+        $this->parent = \Inttegro\ValueHydrator::object($data['parent'] ?? null, [\Inttegro\App\RelationshipParent::class], false);
         $this->status = \Inttegro\ValueHydrator::string($data['status'] ?? null, false);
-        $this->actorAppId = \Inttegro\ValueHydrator::string($data['actor_app_id'] ?? null, false);
-        $this->creatorAppId = \Inttegro\ValueHydrator::string($data['creator_app_id'] ?? null, false);
-        $this->placementParentAppId = \Inttegro\ValueHydrator::string($data['placement_parent_app_id'] ?? null, false);
-        $this->subjectAppId = \Inttegro\ValueHydrator::string($data['subject_app_id'] ?? null, false);
-        $this->childAppId = \Inttegro\ValueHydrator::string($data['child_app_id'] ?? null, false);
-        $this->childStanding = \Inttegro\ValueHydrator::string($data['child_standing'] ?? null, false);
-        $this->relationshipPolicy = \Inttegro\ValueHydrator::object($data['relationship_policy'] ?? null, [\Inttegro\App\RelationshipPolicy::class], false);
-        $this->retainedCreatorAuthorityExists = \Inttegro\ValueHydrator::bool($data['retained_creator_authority_exists'] ?? null, false);
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
     }
 

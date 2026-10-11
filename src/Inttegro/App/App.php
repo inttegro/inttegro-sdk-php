@@ -86,6 +86,16 @@ final class App extends \Inttegro\DomainValue
     public readonly ?DateTimeImmutable $archivedAt;
 
     /**
+     * Public capabilities currently available to this app.
+     *
+     * Required response field. PHP type: `array<string, mixed>`; wire field: `capabilities`
+     * (`object`).
+     *
+     * @var array<string, mixed>
+     */
+    public readonly array $capabilities;
+
+    /**
      * Secret Key value for this app.
      *
      * Optional response field. PHP type: `\Inttegro\App\SecretKey|null`; wire field: `secret_key`
@@ -119,6 +129,7 @@ final class App extends \Inttegro\DomainValue
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
         $this->updatedAt = \Inttegro\ValueHydrator::dateTime($data['updated_at'] ?? null, true);
         $this->archivedAt = \Inttegro\ValueHydrator::dateTime($data['archived_at'] ?? null, true);
+        $this->capabilities = \Inttegro\ValueHydrator::array($data['capabilities'] ?? null, false);
         $this->secretKey = \Inttegro\ValueHydrator::object($data['secret_key'] ?? null, [\Inttegro\App\SecretKey::class], true);
         $this->relationship = \Inttegro\ValueHydrator::object($data['relationship'] ?? null, [\Inttegro\App\Relationship::class], true);
     }
