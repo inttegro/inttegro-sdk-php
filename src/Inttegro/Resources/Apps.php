@@ -52,6 +52,16 @@ class Apps
     }
 
     /**
+     * Retrieves the authenticated application's payment and payout capabilities.
+     *
+     * @return \Inttegro\App\Capabilities Current capability states.
+     */
+    public function capabilities(): \Inttegro\App\Capabilities
+    {
+        return $this->http->postResource('/apps/capabilities', \Inttegro\App\Capabilities::class, 'capabilities', []);
+    }
+
+    /**
      * Updates the supplied fields on the application.
      *
      * Sends the documented request through the shared authenticated transport and hydrates the
