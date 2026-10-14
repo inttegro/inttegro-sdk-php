@@ -42,6 +42,9 @@ final class SettingsMutation extends \Inttegro\DomainValue
      */
     public readonly ?string $id;
 
+    /** Platform limits applied to payouts. Required response field. PHP type: `SettingsLimits`; wire field: `limits` (`object`). */
+    public readonly \Inttegro\Payout\SettingsLimits $limits;
+
     /**
      * Updated payout schedule.
      *
@@ -62,6 +65,7 @@ final class SettingsMutation extends \Inttegro\DomainValue
         $this->destinations = \Inttegro\ValueHydrator::object($data['destinations'] ?? null, [\Inttegro\Payout\Destinations::class], true);
         $this->fxEnabled = \Inttegro\ValueHydrator::bool($data['fx_enabled'] ?? null, true);
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, true);
+        $this->limits = \Inttegro\ValueHydrator::object($data['limits'] ?? null, [\Inttegro\Payout\SettingsLimits::class], false);
         $this->schedule = \Inttegro\ValueHydrator::object($data['schedule'] ?? null, [\Inttegro\Payout\SettingsMutationSchedule::class], true);
     }
 
