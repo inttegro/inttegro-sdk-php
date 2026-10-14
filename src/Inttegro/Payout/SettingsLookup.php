@@ -33,6 +33,9 @@ final class SettingsLookup extends \Inttegro\DomainValue
      */
     public readonly ?bool $fxEnabled;
 
+    /** Platform limits applied to payouts. Required response field. PHP type: `SettingsLimits`; wire field: `limits` (`object`). */
+    public readonly \Inttegro\Payout\SettingsLimits $limits;
+
     /**
      * Active payout schedule.
      *
@@ -52,6 +55,7 @@ final class SettingsLookup extends \Inttegro\DomainValue
     {
         $this->destinations = \Inttegro\ValueHydrator::object($data['destinations'] ?? null, [\Inttegro\Payout\Destinations::class], false);
         $this->fxEnabled = \Inttegro\ValueHydrator::bool($data['fx_enabled'] ?? null, true);
+        $this->limits = \Inttegro\ValueHydrator::object($data['limits'] ?? null, [\Inttegro\Payout\SettingsLimits::class], false);
         $this->schedule = \Inttegro\ValueHydrator::object($data['schedule'] ?? null, [\Inttegro\Payout\SettingsLookupSchedule::class], true);
     }
 
