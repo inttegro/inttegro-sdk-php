@@ -24,13 +24,13 @@ final class SettingsMutationScheduleSpec extends \Inttegro\DomainValue
     public readonly string $abide;
 
     /**
-     * Unique identifier for this settings mutation schedule spec.
+     * Public identifier for this settings mutation schedule spec.
      *
-     * Required response field. PHP type: `string`; wire field: `id` (`string`).
+     * Required response field. PHP type: `string`; wire field: `public_id` (`string`).
      *
      * @var string
      */
-    public readonly string $id;
+    public readonly string $publicId;
 
     /**
      * Label value for this settings mutation schedule spec.
@@ -58,7 +58,7 @@ final class SettingsMutationScheduleSpec extends \Inttegro\DomainValue
     public function __construct(array $data)
     {
         $this->abide = \Inttegro\ValueHydrator::string($data['abide'] ?? null, false);
-        $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
+        $this->publicId = \Inttegro\ValueHydrator::string($data['public_id'] ?? null, false);
         $this->label = \Inttegro\ValueHydrator::string($data['label'] ?? null, false);
         $this->tPlus = \Inttegro\ValueHydrator::string($data['t_plus'] ?? null, false);
     }

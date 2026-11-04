@@ -24,6 +24,15 @@ final class SettingsLookupScheduleAgingSpec extends \Inttegro\DomainValue
     public readonly string $abide;
 
     /**
+     * Public identifier for this settings lookup schedule aging spec.
+     *
+     * Required response field. PHP type: `string`; wire field: `public_id` (`string`).
+     *
+     * @var string
+     */
+    public readonly string $publicId;
+
+    /**
      * Label value for this settings lookup schedule aging spec.
      *
      * Required response field. PHP type: `string`; wire field: `label` (`string`).
@@ -49,6 +58,7 @@ final class SettingsLookupScheduleAgingSpec extends \Inttegro\DomainValue
     public function __construct(array $data)
     {
         $this->abide = \Inttegro\ValueHydrator::string($data['abide'] ?? null, false);
+        $this->publicId = \Inttegro\ValueHydrator::string($data['public_id'] ?? null, false);
         $this->label = \Inttegro\ValueHydrator::string($data['label'] ?? null, false);
         $this->tPlus = \Inttegro\ValueHydrator::string($data['t_plus'] ?? null, false);
     }
