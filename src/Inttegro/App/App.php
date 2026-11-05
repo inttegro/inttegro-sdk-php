@@ -116,6 +116,14 @@ final class App extends \Inttegro\DomainValue
     public readonly ?\Inttegro\App\Relationship $relationship;
 
     /**
+     * Operating-policy snapshot applied to this app for authorized private-beta callers.
+     *
+     * Optional response field. PHP type: `\Inttegro\OperatingPolicy\ApplicationPolicy|null`;
+     * wire field: `operating_policy` (`object`).
+     */
+    public readonly ?\Inttegro\OperatingPolicy\ApplicationPolicy $operatingPolicy;
+
+    /**
      * Hydrates an App from decoded Inttegro API data.
      *
      * @param array<string, mixed> $data Wire object keyed by `snake_case` API field names.
@@ -132,6 +140,11 @@ final class App extends \Inttegro\DomainValue
         $this->capabilities = \Inttegro\ValueHydrator::array($data['capabilities'] ?? null, false);
         $this->secretKey = \Inttegro\ValueHydrator::object($data['secret_key'] ?? null, [\Inttegro\App\SecretKey::class], true);
         $this->relationship = \Inttegro\ValueHydrator::object($data['relationship'] ?? null, [\Inttegro\App\Relationship::class], true);
+        $this->operatingPolicy = \Inttegro\ValueHydrator::object(
+            $data['operating_policy'] ?? null,
+            [\Inttegro\OperatingPolicy\ApplicationPolicy::class],
+            true,
+        );
     }
 
     /**
