@@ -5,7 +5,7 @@ namespace Inttegro\ChildrenPolicy;
 /** Platform-owned balance-transaction aging option granted by a children policy. */
 final class BTAgingSpec extends \Inttegro\DomainValue
 {
-    /** Public aging-spec identifier; PHP type: `string`; wire field: `public_id` (`string`). */
+    /** Aging-spec identifier; PHP type: `string`; wire field: `public_id` (`string`). */
     public readonly string $publicId;
     /** Whole-hour aging duration; PHP type: `string`; wire field: `t_plus` (`string`). */
     public readonly string $tPlus;
