@@ -28,6 +28,8 @@ use Inttegro\Resources\Spec;
 use Inttegro\Resources\Balances;
 use Inttegro\Resources\UploadRequests;
 use Inttegro\Resources\Apps;
+use Inttegro\Resources\ChildrenPolicies;
+use Inttegro\Resources\OperatingPolicies;
 
 /**
  * Authenticated entry point for every Inttegro API resource.
@@ -78,6 +80,10 @@ class Client
     public Otp $otp;
     /** Application creation, lookup, and update operations. */
     public Apps $apps;
+    /** Active children-policy lookup operations. */
+    public ChildrenPolicies $childrenPolicies;
+    /** Reusable operating-policy creation, lookup, and versioning operations. */
+    public OperatingPolicies $operatingPolicies;
     /** Country and payment-rail specification operations. */
     public Spec $spec;
     /** Current application-balance lookup operations. */
@@ -147,6 +153,8 @@ class Client
         $this->messageTemplates = new MessageTemplates($this->http);
         $this->otp = new Otp($this->http);
         $this->apps = new Apps($this->http);
+        $this->childrenPolicies = new ChildrenPolicies($this->http);
+        $this->operatingPolicies = new OperatingPolicies($this->http);
         $this->spec = new Spec($this->http);
         $this->balances = new Balances($this->http);
         $this->uploadRequests = new UploadRequests($this->http);
