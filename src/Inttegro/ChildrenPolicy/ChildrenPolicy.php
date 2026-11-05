@@ -9,8 +9,6 @@ final class ChildrenPolicy extends \Inttegro\DomainValue
 {
     /** Policy identifier; PHP type: `string`; wire field: `id` (`string`). */
     public readonly string $id;
-    /** Owning application; PHP type: `string`; wire field: `owner_application_id` (`string`). */
-    public readonly string $ownerApplicationId;
     /** Returned version; PHP type: `int`; wire field: `version` (`integer`). */
     public readonly int $version;
     /** Active version; PHP type: `int`; wire field: `active_version` (`integer`). */
@@ -32,7 +30,6 @@ final class ChildrenPolicy extends \Inttegro\DomainValue
     public function __construct(array $data)
     {
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
-        $this->ownerApplicationId = \Inttegro\ValueHydrator::string($data['owner_application_id'] ?? null, false);
         $this->version = \Inttegro\ValueHydrator::int($data['version'] ?? null, false);
         $this->activeVersion = \Inttegro\ValueHydrator::int($data['active_version'] ?? null, false);
         $this->name = \Inttegro\ValueHydrator::string($data['name'] ?? null, false);
