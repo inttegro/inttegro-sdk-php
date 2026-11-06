@@ -96,6 +96,15 @@ final class App extends \Inttegro\DomainValue
     public readonly array $capabilities;
 
     /**
+     * Active children policy assigned to this app for authorized private-beta callers.
+     *
+     * Optional response field. Wire field: `children_policy` (`object`).
+     *
+     * @var \Inttegro\ChildrenPolicy\ChildrenPolicy|null
+     */
+    public readonly ?\Inttegro\ChildrenPolicy\ChildrenPolicy $childrenPolicy;
+
+    /**
      * Secret Key value for this app.
      *
      * Optional response field. PHP type: `\Inttegro\App\SecretKey|null`; wire field: `secret_key`
@@ -138,6 +147,11 @@ final class App extends \Inttegro\DomainValue
         $this->updatedAt = \Inttegro\ValueHydrator::dateTime($data['updated_at'] ?? null, true);
         $this->archivedAt = \Inttegro\ValueHydrator::dateTime($data['archived_at'] ?? null, true);
         $this->capabilities = \Inttegro\ValueHydrator::array($data['capabilities'] ?? null, false);
+        $this->childrenPolicy = \Inttegro\ValueHydrator::object(
+            $data['children_policy'] ?? null,
+            [\Inttegro\ChildrenPolicy\ChildrenPolicy::class],
+            true,
+        );
         $this->secretKey = \Inttegro\ValueHydrator::object($data['secret_key'] ?? null, [\Inttegro\App\SecretKey::class], true);
         $this->relationship = \Inttegro\ValueHydrator::object($data['relationship'] ?? null, [\Inttegro\App\Relationship::class], true);
         $this->operatingPolicy = \Inttegro\ValueHydrator::object(

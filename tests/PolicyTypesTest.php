@@ -33,7 +33,7 @@ final class PolicyTypesTest extends TestCase
         ];
         $resolvedCapabilities = $capabilities;
         $resolvedCapabilities['payouts']['bt_aging_spec'] = [
-            'public_id' => 'bt_aging_spec_immediate',
+                    'id' => 'bt_aging_spec_immediate',
             't_plus' => '0h',
         ];
         $adapter = static function ($method, $url, $headers, $payload) use (&$requests, $timestamps, $resolvedCapabilities): array {
@@ -51,7 +51,7 @@ final class PolicyTypesTest extends TestCase
                     'payouts' => [
                         'enabled' => [false],
                         'bt_aging_spec' => [[
-                            'public_id' => 'bt_aging_spec_immediate',
+                            'id' => 'bt_aging_spec_immediate',
                             't_plus' => '0h',
                         ]],
                     ],
@@ -102,7 +102,7 @@ final class PolicyTypesTest extends TestCase
         self::assertTrue($childrenPage->hasMore);
         self::assertSame('cp_1', $childrenPage->versions[0]->id);
         self::assertInstanceOf(OperatingPolicy::class, $created);
-        self::assertSame('bt_aging_spec_immediate', $created->capabilities->payouts->btAgingSpec->publicId);
+        self::assertSame('bt_aging_spec_immediate', $created->capabilities->payouts->btAgingSpec->id);
         self::assertSame('op_1', $lookedUp->id);
         self::assertSame(1, $historicalOperatingPolicy->version);
         self::assertSame(2, $operatingPage->total);

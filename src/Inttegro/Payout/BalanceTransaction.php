@@ -35,6 +35,14 @@ final class BalanceTransaction extends \Inttegro\DomainValue
      */
     public readonly string $id;
 
+    /**
+     * Whether this contribution remains reserved, completed, or released.
+     *
+     * Required response field. PHP type: `BalanceTransactionStatus`; wire field:
+     * `status` (`string`).
+     */
+    public readonly BalanceTransactionStatus $status;
+
     /** @param array<string, mixed> $data */
     public function __construct(array $data)
     {
@@ -45,6 +53,9 @@ final class BalanceTransaction extends \Inttegro\DomainValue
         );
         $this->amount = \Inttegro\ValueHydrator::object($data['amount'] ?? null, [Amount::class], false);
         $this->id = \Inttegro\ValueHydrator::string($data['id'] ?? null, false);
+        $this->status = BalanceTransactionStatus::from(
+            \Inttegro\ValueHydrator::string($data['status'] ?? null, false),
+        );
     }
 
     /** @param array<string, mixed> $data */
