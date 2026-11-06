@@ -55,12 +55,14 @@ final class ClientTest extends TestCase
                 'id' => 'bt_1',
                 'amount' => ['currency' => 'ghs', 'value' => 5000],
                 'allocated_amount' => ['currency' => 'ghs', 'value' => 2000],
+                'status' => 'reserved',
             ]],
         ]);
 
         self::assertSame('bt_1', $payout->balanceTransactions[0]->id);
         self::assertSame(5000, $payout->balanceTransactions[0]->amount->value);
         self::assertSame(2000, $payout->balanceTransactions[0]->allocatedAmount->value);
+        self::assertSame(\Inttegro\Payout\BalanceTransactionStatus::Reserved, $payout->balanceTransactions[0]->status);
         self::assertSame('failed', $payout->status);
         self::assertSame(\Inttegro\Payout\FailureReason::TemporarilyUnavailable, $payout->failure->reason);
         self::assertTrue($payout->failure->retryable);
