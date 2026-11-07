@@ -1020,7 +1020,7 @@ final class ClientTest extends TestCase
         $client->orders->lookup('or_1');
     }
 
-    public function test_mutating_posts_reject_top_level_idempotency_key(): void
+    public function test_mutating_posts_generate_request_meta_idempotency_key(): void
     {
         $requests = [];
         $adapter = function ($method, $url, $headers, $payload) use (&$requests) {
@@ -1037,13 +1037,10 @@ final class ClientTest extends TestCase
         };
 
         $client = new Client('test-key', 'https://api.inttegro.com', 5, $adapter);
-        try {
-            $client->orders->create(['number' => 'ORDER-1', 'idempotency_key' => 'legacy']);
-            $this->fail('top-level idempotency_key was accepted');
-        } catch (\InvalidArgumentException $exception) {
-            $this->assertStringContainsString('top-level idempotency_key is not supported', $exception->getMessage());
-        }
-        $this->assertSame([], $requests);
+        $client->orders->create(['number' => 'ORDER-1']);
+
+        $body = json_decode($requests[0]['payload'], true);
+        $this->assertMatchesRegularExpression(self::UUID_V7_REGEX, $body['request_meta']['idempotency_key']);
     }
 
     public function test_read_style_posts_do_not_generate_idempotency_metadata(): void
@@ -1087,7 +1084,6 @@ final class ClientTest extends TestCase
         foreach ($requests as $request) {
             $body = json_decode($request['payload'], true);
             $this->assertArrayNotHasKey('request_meta', $body);
-            $this->assertArrayNotHasKey('idempotency_key', $body);
         }
     }
 

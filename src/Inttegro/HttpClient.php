@@ -142,7 +142,6 @@ class HttpClient
         bool $authenticated,
         ?string $operation = null
     ): array {
-        $fields = $this->validateRequestBody($fields);
         return $this->telemetry->trace(
             $path,
             'POST',
@@ -186,7 +185,6 @@ class HttpClient
     {
         return $this->telemetry->trace($path, 'POST', $this->baseUrl, function (?SpanInterface $span) use ($path, $body): FileDownload {
             $url = $this->buildUrl($path, []);
-            $body = $this->validateRequestBody($body);
             $headers = $this->telemetry->prepare($span, [
                 'Accept: application/octet-stream',
                 'Authorization: Bearer ' . $this->apiKey,
@@ -260,7 +258,7 @@ class HttpClient
                         && $this->isIdempotentMutationPath($path)
                         && !$this->hasHeader($customHeaders, 'Idempotency-Key')
                         ? $this->withRequestMetaIdempotency($body)
-                        : $this->validateRequestBody($body);
+                        : $body;
                     $headers[] = 'Content-Type: application/json';
                     $payload = $this->encodeJson($body);
                 }
@@ -289,7 +287,7 @@ class HttpClient
 
     private function withRequestMetaIdempotency(array $body): array
     {
-        $payload = $this->validateRequestBody($body);
+        $payload = $body;
         $requestMeta = isset($payload['request_meta']) && is_array($payload['request_meta'])
             ? $payload['request_meta']
             : [];
@@ -299,16 +297,6 @@ class HttpClient
         }
         $payload['request_meta'] = $requestMeta;
         return $payload;
-    }
-
-    private function validateRequestBody(array $body): array
-    {
-        if (array_key_exists('idempotency_key', $body)) {
-            throw new \InvalidArgumentException(
-                'top-level idempotency_key is not supported; use request_meta.idempotency_key or the Idempotency-Key header'
-            );
-        }
-        return $body;
     }
 
     private function isIdempotentMutationPath(string $pathOrUrl): bool
