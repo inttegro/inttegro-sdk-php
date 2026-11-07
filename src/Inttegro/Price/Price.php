@@ -55,15 +55,6 @@ final class Price extends \Inttegro\DomainValue
     /** Required. PHP type: `Type`; wire field: `type` (`string`). */
     public readonly Type $type;
 
-    /**
-     * Price amount.
-     *
-     * Required response field. PHP type: `Amount`; wire field: `nominal` (`object`).
-     *
-     * @var Amount
-     */
-    public readonly ?Amount $nominal;
-
     /** Optional. PHP type: `Amount|null`; wire field: `fixed_amount` (`object`). */
     public readonly ?Amount $fixedAmount;
 
@@ -134,7 +125,6 @@ final class Price extends \Inttegro\DomainValue
         $this->about = \Inttegro\ValueHydrator::string($data['about'] ?? null, true);
         $this->active = \Inttegro\ValueHydrator::bool($data['active'] ?? null, false);
         $this->type = Type::from(\Inttegro\ValueHydrator::string($data['type'] ?? null, false));
-        $this->nominal = \Inttegro\ValueHydrator::object($data['nominal'] ?? null, [Amount::class], true);
         $this->fixedAmount = \Inttegro\ValueHydrator::object($data['fixed_amount'] ?? null, [Amount::class], true);
         $this->customerSelectedAmount = \Inttegro\ValueHydrator::object($data['customer_selected_amount'] ?? null, [CustomerSelectedAmount::class], true);
         $this->productId = \Inttegro\ValueHydrator::string($data['product_id'] ?? null, true);

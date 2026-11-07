@@ -47,9 +47,6 @@ final class PriceSummary extends \Inttegro\DomainValue
     /** Required. PHP type: `PriceType`; wire field: `type` (`string`). */
     public readonly PriceType $type;
 
-    /** Optional deprecated alias. PHP type: `Amount|null`; wire field: `nominal` (`object`). */
-    public readonly ?Amount $nominal;
-
     /** Optional. PHP type: `Amount|null`; wire field: `fixed_amount` (`object`). */
     public readonly ?Amount $fixedAmount;
 
@@ -67,7 +64,6 @@ final class PriceSummary extends \Inttegro\DomainValue
         $this->active = \Inttegro\ValueHydrator::bool($data['active'] ?? null, false);
         $this->label = \Inttegro\ValueHydrator::string($data['label'] ?? null, true);
         $this->type = PriceType::from(\Inttegro\ValueHydrator::string($data['type'] ?? null, false));
-        $this->nominal = \Inttegro\ValueHydrator::object($data['nominal'] ?? null, [Amount::class], true);
         $this->fixedAmount = \Inttegro\ValueHydrator::object($data['fixed_amount'] ?? null, [Amount::class], true);
         $this->customerSelectedAmount = \Inttegro\ValueHydrator::object($data['customer_selected_amount'] ?? null, [CustomerSelectedAmount::class], true);
     }
