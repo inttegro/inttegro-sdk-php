@@ -36,8 +36,7 @@ class Files
     {
         $file = $payload['file'];
         unset($payload['file']);
-        $idempotencyKey = $options['idempotency_key'] ?? $payload['idempotency_key'] ?? null;
-        unset($payload['idempotency_key']);
+        $idempotencyKey = $options['idempotency_key'] ?? null;
         return $this->http->postMultipartResource(
             '/files/create',
             \Inttegro\File\File::class,

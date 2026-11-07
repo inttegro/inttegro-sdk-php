@@ -142,6 +142,7 @@ class HttpClient
         bool $authenticated,
         ?string $operation = null
     ): array {
+        $fields = $this->validateRequestBody($fields);
         return $this->telemetry->trace(
             $path,
             'POST',
@@ -185,7 +186,7 @@ class HttpClient
     {
         return $this->telemetry->trace($path, 'POST', $this->baseUrl, function (?SpanInterface $span) use ($path, $body): FileDownload {
             $url = $this->buildUrl($path, []);
-            $body = $this->withoutTopLevelIdempotencyKey($body);
+            $body = $this->validateRequestBody($body);
             $headers = $this->telemetry->prepare($span, [
                 'Accept: application/octet-stream',
                 'Authorization: Bearer ' . $this->apiKey,
@@ -259,7 +260,7 @@ class HttpClient
                         && $this->isIdempotentMutationPath($path)
                         && !$this->hasHeader($customHeaders, 'Idempotency-Key')
                         ? $this->withRequestMetaIdempotency($body)
-                        : $this->withoutTopLevelIdempotencyKey($body);
+                        : $this->validateRequestBody($body);
                     $headers[] = 'Content-Type: application/json';
                     $payload = $this->encodeJson($body);
                 }
@@ -288,7 +289,7 @@ class HttpClient
 
     private function withRequestMetaIdempotency(array $body): array
     {
-        $payload = $this->withoutTopLevelIdempotencyKey($body);
+        $payload = $this->validateRequestBody($body);
         $requestMeta = isset($payload['request_meta']) && is_array($payload['request_meta'])
             ? $payload['request_meta']
             : [];
@@ -300,9 +301,13 @@ class HttpClient
         return $payload;
     }
 
-    private function withoutTopLevelIdempotencyKey(array $body): array
+    private function validateRequestBody(array $body): array
     {
-        unset($body['idempotency_key']);
+        if (array_key_exists('idempotency_key', $body)) {
+            throw new \InvalidArgumentException(
+                'top-level idempotency_key is not supported; use request_meta.idempotency_key or the Idempotency-Key header'
+            );
+        }
         return $body;
     }
 

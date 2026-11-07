@@ -862,7 +862,7 @@ final class ClientTest extends TestCase
             'recipient' => '+233',
             'sender' => 'Acme',
             'service_name' => 'Acme Bank',
-            'idempotency_key' => 'otp_login_1700000000',
+            'request_meta' => ['idempotency_key' => 'otp_login_1700000000'],
             'purpose' => 'sign_in',
         ]);
         $client->otp->verify(['transaction_id' => 'txn_1', 'recipient' => '+233', 'token' => '123456']);
@@ -1020,7 +1020,7 @@ final class ClientTest extends TestCase
         $client->orders->lookup('or_1');
     }
 
-    public function test_mutating_posts_generate_request_meta_idempotency_key(): void
+    public function test_mutating_posts_reject_top_level_idempotency_key(): void
     {
         $requests = [];
         $adapter = function ($method, $url, $headers, $payload) use (&$requests) {
@@ -1037,11 +1037,13 @@ final class ClientTest extends TestCase
         };
 
         $client = new Client('test-key', 'https://api.inttegro.com', 5, $adapter);
-        $client->orders->create(['number' => 'ORDER-1', 'idempotency_key' => 'legacy']);
-
-        $body = json_decode($requests[0]['payload'], true);
-        $this->assertArrayNotHasKey('idempotency_key', $body);
-        $this->assertMatchesRegularExpression(self::UUID_V7_REGEX, $body['request_meta']['idempotency_key']);
+        try {
+            $client->orders->create(['number' => 'ORDER-1', 'idempotency_key' => 'legacy']);
+            $this->fail('top-level idempotency_key was accepted');
+        } catch (\InvalidArgumentException $exception) {
+            $this->assertStringContainsString('top-level idempotency_key is not supported', $exception->getMessage());
+        }
+        $this->assertSame([], $requests);
     }
 
     public function test_read_style_posts_do_not_generate_idempotency_metadata(): void
