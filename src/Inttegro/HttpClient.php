@@ -185,7 +185,6 @@ class HttpClient
     {
         return $this->telemetry->trace($path, 'POST', $this->baseUrl, function (?SpanInterface $span) use ($path, $body): FileDownload {
             $url = $this->buildUrl($path, []);
-            $body = $this->withoutTopLevelIdempotencyKey($body);
             $headers = $this->telemetry->prepare($span, [
                 'Accept: application/octet-stream',
                 'Authorization: Bearer ' . $this->apiKey,
@@ -259,7 +258,7 @@ class HttpClient
                         && $this->isIdempotentMutationPath($path)
                         && !$this->hasHeader($customHeaders, 'Idempotency-Key')
                         ? $this->withRequestMetaIdempotency($body)
-                        : $this->withoutTopLevelIdempotencyKey($body);
+                        : $body;
                     $headers[] = 'Content-Type: application/json';
                     $payload = $this->encodeJson($body);
                 }
@@ -288,22 +287,17 @@ class HttpClient
 
     private function withRequestMetaIdempotency(array $body): array
     {
-        $payload = $this->withoutTopLevelIdempotencyKey($body);
-        $requestMeta = isset($payload['request_meta']) && is_array($payload['request_meta'])
-            ? $payload['request_meta']
-            : [];
+        $payload = $body;
+        $requestMetaValue = $payload['request_meta'] ?? null;
+        $requestMeta = $requestMetaValue instanceof Request\Meta
+            ? $requestMetaValue->toArray()
+            : (is_array($requestMetaValue) ? $requestMetaValue : []);
         $existingKey = $requestMeta['idempotency_key'] ?? null;
         if (!is_string($existingKey) || trim($existingKey) === '') {
             $requestMeta['idempotency_key'] = $this->generateIdempotencyKey();
         }
         $payload['request_meta'] = $requestMeta;
         return $payload;
-    }
-
-    private function withoutTopLevelIdempotencyKey(array $body): array
-    {
-        unset($body['idempotency_key']);
-        return $body;
     }
 
     private function isIdempotentMutationPath(string $pathOrUrl): bool

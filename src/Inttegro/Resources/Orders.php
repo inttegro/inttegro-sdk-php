@@ -7,6 +7,7 @@ use Inttegro\Order\Order;
 use Inttegro\Order\DocumentDeliveryResult;
 use Inttegro\Order\Page;
 use Inttegro\Response;
+use Inttegro\Request\Meta as RequestMeta;
 
 /**
  * Orders resource for creating orders, processing payments, and managing order lifecycle.
@@ -49,7 +50,7 @@ class Orders
      *   - checkout_settings: array - Checkout flow configuration with redirect_url and cancel_url
      *   - payout_settings: array - Order-specific payout destination configuration
      *   - custom_data: array - Key-value custom data (max 25KB, keys and values must be strings)
-     *   - request_meta: array - Request controls such as idempotency_key
+     *   - request_meta: RequestMeta - Typed idempotency and response-projection controls
      *   - number: string - Optional order number for reference
      *   - statement_descriptor: string - Text on customer's bank statement (max 22 characters)
      *   - statement_descriptor_prefix: string - Static prefix, 2-10 characters, used to build prefix*order_id; mutually exclusive with statement_descriptor
@@ -256,7 +257,7 @@ class Orders
      * token will be sent via SMS or email to the customer's registered contact information.
      *
      * @param string $orderId Unique identifier of the order requiring confirmation (required)
-     * @param array<string, mixed> $requestMeta Request controls such as idempotency_key (optional)
+     * @param RequestMeta|null $requestMeta Typed request controls (optional)
      *
      * @return Order The updated order
      *
@@ -271,11 +272,11 @@ class Orders
      *
      * @see https://studio.inttegro.com/accept-a-payment for payment confirmation flow
      */
-    public function requestConfirmation(string $orderId, array $requestMeta = []): Order
+    public function requestConfirmation(string $orderId, ?RequestMeta $requestMeta = null): Order
     {
         return $this->http->postResource('/orders/request_confirmation', Order::class, 'order', [
             'order_id' => $orderId,
-            'request_meta' => $requestMeta ?: $this->stableOrderRequestMeta('request_confirmation', $orderId),
+            'request_meta' => $requestMeta ?? $this->stableOrderRequestMeta('request_confirmation', $orderId),
         ]);
     }
 
@@ -286,7 +287,7 @@ class Orders
      * or order completion. Most orders are finalized automatically, but you can explicitly finalize if needed.
      *
      * @param string $orderId Unique identifier of the order to finalize (required)
-     * @param array<string, mixed> $requestMeta Request controls such as idempotency_key (optional)
+     * @param RequestMeta|null $requestMeta Typed request controls (optional)
      *
      * @return Order The finalized order
      *
@@ -301,11 +302,11 @@ class Orders
      *
      * @see https://studio.inttegro.com/order-lifecycle for order states
      */
-    public function finalize(string $orderId, array $requestMeta = []): Order
+    public function finalize(string $orderId, ?RequestMeta $requestMeta = null): Order
     {
         return $this->http->postResource('/orders/finalize', Order::class, 'order', [
             'order_id' => $orderId,
-            'request_meta' => $requestMeta ?: $this->stableOrderRequestMeta('finalize', $orderId),
+            'request_meta' => $requestMeta ?? $this->stableOrderRequestMeta('finalize', $orderId),
         ]);
     }
 
@@ -371,7 +372,7 @@ class Orders
      * the order cannot be fulfilled. If payment was already captured, you'll need to refund it separately.
      *
      * @param string $orderId Unique identifier of the order to cancel (required)
-     * @param array<string, mixed> $requestMeta Request controls such as idempotency_key (optional)
+     * @param RequestMeta|null $requestMeta Typed request controls (optional)
      *
      * @return Order The cancelled order
      *
@@ -386,11 +387,11 @@ class Orders
      *
      * @see https://studio.inttegro.com/order-lifecycle for order states
      */
-    public function cancel(string $orderId, array $requestMeta = []): Order
+    public function cancel(string $orderId, ?RequestMeta $requestMeta = null): Order
     {
         return $this->http->postResource('/orders/cancel', Order::class, 'order', [
             'order_id' => $orderId,
-            'request_meta' => $requestMeta ?: $this->stableOrderRequestMeta('cancel', $orderId),
+            'request_meta' => $requestMeta ?? $this->stableOrderRequestMeta('cancel', $orderId),
         ]);
     }
 
@@ -431,8 +432,8 @@ class Orders
         return $this->http->postResource('/orders/search', \Inttegro\ResourceSearchPage::class, 'search', $payload->toArray());
     }
 
-    private function stableOrderRequestMeta(string $action, string $orderId): array
+    private function stableOrderRequestMeta(string $action, string $orderId): RequestMeta
     {
-        return ['idempotency_key' => sprintf('orders_%s_%s', $action, $orderId)];
+        return new RequestMeta(sprintf('orders_%s_%s', $action, $orderId));
     }
 }

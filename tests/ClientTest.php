@@ -27,6 +27,9 @@ use Inttegro\BankAccount\BankAccount;
 use Inttegro\BankAccount\Type as BankAccountType;
 use Inttegro\Wallet\Wallet;
 use Inttegro\Wallet\Type as WalletType;
+use Inttegro\Request\Meta as RequestMeta;
+use Inttegro\Request\PropertySelection;
+use Inttegro\Request\Response as RequestResponse;
 use OpenTelemetry\API\Trace\SpanBuilderInterface;
 use OpenTelemetry\API\Trace\SpanInterface;
 use OpenTelemetry\API\Trace\TracerInterface;
@@ -36,6 +39,23 @@ use OpenTelemetry\Context\ScopeInterface;
 
 final class ClientTest extends TestCase
 {
+    public function test_request_metadata_serializes_typed_response_projection(): void
+    {
+        $metadata = new RequestMeta(response: new RequestResponse([
+            'order' => PropertySelection::pick(['id', 'status', 'customer.name']),
+            'payment' => PropertySelection::omit(['latest_error']),
+        ]));
+
+        self::assertSame([
+            'response' => [
+                'projection' => [
+                    'order' => ['pick' => ['id', 'status', 'customer.name']],
+                    'payment' => ['omit' => ['latest_error']],
+                ],
+            ],
+        ], $metadata->toArray());
+    }
+
     public function test_payout_decodes_balance_transaction_contributions(): void
     {
         $payout = \Inttegro\Payout\Payout::fromArray([
@@ -862,7 +882,7 @@ final class ClientTest extends TestCase
             'recipient' => '+233',
             'sender' => 'Acme',
             'service_name' => 'Acme Bank',
-            'idempotency_key' => 'otp_login_1700000000',
+            'request_meta' => ['idempotency_key' => 'otp_login_1700000000'],
             'purpose' => 'sign_in',
         ]);
         $client->otp->verify(['transaction_id' => 'txn_1', 'recipient' => '+233', 'token' => '123456']);
@@ -1037,10 +1057,9 @@ final class ClientTest extends TestCase
         };
 
         $client = new Client('test-key', 'https://api.inttegro.com', 5, $adapter);
-        $client->orders->create(['number' => 'ORDER-1', 'idempotency_key' => 'legacy']);
+        $client->orders->create(['number' => 'ORDER-1']);
 
         $body = json_decode($requests[0]['payload'], true);
-        $this->assertArrayNotHasKey('idempotency_key', $body);
         $this->assertMatchesRegularExpression(self::UUID_V7_REGEX, $body['request_meta']['idempotency_key']);
     }
 
@@ -1085,7 +1104,6 @@ final class ClientTest extends TestCase
         foreach ($requests as $request) {
             $body = json_decode($request['payload'], true);
             $this->assertArrayNotHasKey('request_meta', $body);
-            $this->assertArrayNotHasKey('idempotency_key', $body);
         }
     }
 
