@@ -2,6 +2,8 @@
 
 namespace Inttegro\Resources;
 
+use Inttegro\Request\Meta as RequestMeta;
+
 use Inttegro\HttpClient;
 
 /**
@@ -74,7 +76,7 @@ class PaymentMethods
      * confirmation on each transaction.
      *
      * @param string $paymentMethodId Unique identifier of the payment method to verify (required)
-     * @param array<string, mixed> $requestMeta Request controls such as idempotency_key (optional)
+     * @param RequestMeta|null $requestMeta Typed request controls (optional)
      *
      * @return \Inttegro\PaymentMethod\VerificationSession Payment method with verification status
      *
@@ -91,11 +93,11 @@ class PaymentMethods
      *
      * @see https://studio.inttegro.com/charge-repeat-customers for verification flow
      */
-    public function verify(string $paymentMethodId, array $requestMeta = []): \Inttegro\PaymentMethod\VerificationSession
+    public function verify(string $paymentMethodId, ?RequestMeta $requestMeta = null): \Inttegro\PaymentMethod\VerificationSession
     {
         return $this->http->postResource('/payment_methods/verify', \Inttegro\PaymentMethod\VerificationSession::class, 'verification', [
             'payment_method_id' => $paymentMethodId,
-            'request_meta' => $requestMeta ?: $this->stablePaymentMethodRequestMeta('verify', $paymentMethodId),
+            'request_meta' => $requestMeta ?? $this->stablePaymentMethodRequestMeta('verify', $paymentMethodId),
         ]);
     }
 
@@ -265,7 +267,7 @@ class PaymentMethods
      * Deletion is permanent and cannot be undone.
      *
      * @param string $paymentMethodId Unique identifier of the payment method to delete (required)
-     * @param array<string, mixed> $requestMeta Request controls such as idempotency_key (optional)
+     * @param RequestMeta|null $requestMeta Typed request controls (optional)
      *
      * @return \Inttegro\PaymentMethod\Deletion Confirmation of deletion
      *
@@ -280,11 +282,11 @@ class PaymentMethods
      *
      * @see https://studio.inttegro.com/payment-methods for payment method management
      */
-    public function delete(string $paymentMethodId, array $requestMeta = []): \Inttegro\PaymentMethod\Deletion
+    public function delete(string $paymentMethodId, ?RequestMeta $requestMeta = null): \Inttegro\PaymentMethod\Deletion
     {
         return $this->http->postValue('/payment_methods/delete', \Inttegro\PaymentMethod\Deletion::class, [
             'payment_method_id' => $paymentMethodId,
-            'request_meta' => $requestMeta ?: $this->stablePaymentMethodRequestMeta('delete', $paymentMethodId),
+            'request_meta' => $requestMeta ?? $this->stablePaymentMethodRequestMeta('delete', $paymentMethodId),
         ]);
     }
 
@@ -309,8 +311,8 @@ class PaymentMethods
         return $this->http->postResource('/payment_methods/settings', \Inttegro\PaymentMethod\Settings::class, 'settings', []);
     }
 
-    private function stablePaymentMethodRequestMeta(string $action, string $paymentMethodId): array
+    private function stablePaymentMethodRequestMeta(string $action, string $paymentMethodId): RequestMeta
     {
-        return ['idempotency_key' => sprintf('payment_methods_%s_%s', $action, $paymentMethodId)];
+        return new RequestMeta(sprintf('payment_methods_%s_%s', $action, $paymentMethodId));
     }
 }

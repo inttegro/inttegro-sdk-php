@@ -288,9 +288,10 @@ class HttpClient
     private function withRequestMetaIdempotency(array $body): array
     {
         $payload = $body;
-        $requestMeta = isset($payload['request_meta']) && is_array($payload['request_meta'])
-            ? $payload['request_meta']
-            : [];
+        $requestMetaValue = $payload['request_meta'] ?? null;
+        $requestMeta = $requestMetaValue instanceof Request\Meta
+            ? $requestMetaValue->toArray()
+            : (is_array($requestMetaValue) ? $requestMetaValue : []);
         $existingKey = $requestMeta['idempotency_key'] ?? null;
         if (!is_string($existingKey) || trim($existingKey) === '') {
             $requestMeta['idempotency_key'] = $this->generateIdempotencyKey();

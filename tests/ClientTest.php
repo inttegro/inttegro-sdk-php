@@ -27,6 +27,9 @@ use Inttegro\BankAccount\BankAccount;
 use Inttegro\BankAccount\Type as BankAccountType;
 use Inttegro\Wallet\Wallet;
 use Inttegro\Wallet\Type as WalletType;
+use Inttegro\Request\Meta as RequestMeta;
+use Inttegro\Request\PropertySelection;
+use Inttegro\Request\Response as RequestResponse;
 use OpenTelemetry\API\Trace\SpanBuilderInterface;
 use OpenTelemetry\API\Trace\SpanInterface;
 use OpenTelemetry\API\Trace\TracerInterface;
@@ -36,6 +39,23 @@ use OpenTelemetry\Context\ScopeInterface;
 
 final class ClientTest extends TestCase
 {
+    public function test_request_metadata_serializes_typed_response_projection(): void
+    {
+        $metadata = new RequestMeta(response: new RequestResponse([
+            'order' => PropertySelection::pick(['id', 'status', 'customer.name']),
+            'payment' => PropertySelection::omit(['latest_error']),
+        ]));
+
+        self::assertSame([
+            'response' => [
+                'projection' => [
+                    'order' => ['pick' => ['id', 'status', 'customer.name']],
+                    'payment' => ['omit' => ['latest_error']],
+                ],
+            ],
+        ], $metadata->toArray());
+    }
+
     public function test_payout_decodes_balance_transaction_contributions(): void
     {
         $payout = \Inttegro\Payout\Payout::fromArray([
