@@ -367,7 +367,6 @@ final class ClientTest extends TestCase
             'id' => 'pr_123',
             'active' => true,
             'type' => 'fixed_amount',
-            'nominal' => ['currency' => 'ghs', 'value' => 3005],
             'fixed_amount' => ['currency' => 'ghs', 'value' => 3005],
             'product_id' => 'prod_123',
             'created_at' => '2026-09-02T12:00:00Z',
@@ -391,8 +390,8 @@ final class ClientTest extends TestCase
             'type' => 'fixed_amount',
             'fixed_amount' => ['currency' => 'ghs', 'value' => 3005],
         ], $productPrice->toArray());
-        $this->assertInstanceOf(Amount::class, $catalogPrice->nominal);
-        $this->assertSame(Currency::GHS, $catalogPrice->nominal->currency);
+        $this->assertInstanceOf(Amount::class, $catalogPrice->fixedAmount);
+        $this->assertSame(Currency::GHS, $catalogPrice->fixedAmount->currency);
         $this->assertSame('prod_123', $catalogPrice->productId);
         $this->assertSame(Currency::EUR, $inlinePrice->currency);
 
@@ -421,7 +420,7 @@ final class ClientTest extends TestCase
             'product_id' => 'prod_donation',
             'created_at' => '2026-10-01T12:00:00Z',
         ]);
-        $this->assertNull($selectedPrice->nominal);
+        $this->assertNull($selectedPrice->fixedAmount);
         $this->assertSame(500, $selectedPrice->customerSelectedAmount?->minimum);
 
         $catalogProduct = new \Inttegro\Product\CatalogWithCustomerSelectedPrice(
@@ -709,7 +708,6 @@ final class ClientTest extends TestCase
                     'active' => true,
                     'type' => 'fixed_amount',
                     'fixed_amount' => ['currency' => 'ghs', 'value' => 5000],
-                    'nominal' => ['currency' => 'ghs', 'value' => 5000],
                     'created_at' => '2026-09-10T10:00:00Z',
                 ]],
                 '/keys/usage' => [
