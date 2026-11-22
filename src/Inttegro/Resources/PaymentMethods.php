@@ -167,7 +167,7 @@ class PaymentMethods
      * Sends the documented request through the shared authenticated transport and hydrates the
      * successful response into the declared return type.
      *
-     * @param array<string, mixed> $payload Request fields keyed by the documented `snake_case` API names.
+     * @param array<string, mixed> $payload Page filters keyed by documented API field names.
      * @return \Inttegro\PaymentMethod\Page A typed page of matching payment methods.
      */
     public function page(array $payload = []): \Inttegro\PaymentMethod\Page
@@ -181,12 +181,12 @@ class PaymentMethods
      * Sends the documented request through the shared authenticated transport and hydrates the
      * successful response into the declared return type.
      *
-     * @param array<string, mixed> $payload Request fields keyed by the documented `snake_case` API names.
+     * @param \Inttegro\PaymentMethod\UpdateRequest $payload Typed payment-method update fields.
      * @return \Inttegro\PaymentMethod\PaymentMethod The updated payment method.
      */
-    public function update(array $payload): \Inttegro\PaymentMethod\PaymentMethod
+    public function update(\Inttegro\PaymentMethod\UpdateRequest $payload): \Inttegro\PaymentMethod\PaymentMethod
     {
-        return $this->http->postResource('/payment_methods/update', \Inttegro\PaymentMethod\PaymentMethod::class, 'payment_method', $payload);
+        return $this->http->postResource('/payment_methods/update', \Inttegro\PaymentMethod\PaymentMethod::class, 'payment_method', $payload->toArray());
     }
 
     /**

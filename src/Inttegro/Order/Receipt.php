@@ -26,19 +26,23 @@ final class Receipt extends \Inttegro\DomainValue
     /**
      * Receipt delivery history.
      *
-     * Optional response field. PHP type: `array<string, mixed>|null`; wire field:
+     * Optional response field. PHP type: `DocumentDeliverySummary|null`; wire field:
      * `delivery_summary` (`object`).
      *
-     * @var array<string, mixed>|null
+     * @var DocumentDeliverySummary|null
      */
-    public readonly ?array $deliverySummary;
+    public readonly ?DocumentDeliverySummary $deliverySummary;
 
     /** @param array<string, mixed> $data */
     public function __construct(array $data)
     {
         $this->number = \Inttegro\ValueHydrator::string($data['number'] ?? null, true);
         $this->format = \Inttegro\ValueHydrator::object($data['format'] ?? null, [ReceiptFormat::class], false);
-        $this->deliverySummary = \Inttegro\ValueHydrator::array($data['delivery_summary'] ?? null, true);
+        $this->deliverySummary = \Inttegro\ValueHydrator::object(
+            $data['delivery_summary'] ?? null,
+            [DocumentDeliverySummary::class],
+            true,
+        );
     }
 
     /** @param array<string, mixed> $data */

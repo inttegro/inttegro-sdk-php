@@ -160,7 +160,6 @@ class Chimes
      *   - service_name: string - Service initiating the broadcast (required)
      *   - sender: string - Sender identifier (optional)
      *   - purpose: string - Purpose of this broadcast (optional)
-     *   - preferred_gateway: string - Preferred delivery gateway (optional)
      *   - request_meta: array - Request controls such as idempotency_key (optional)
      *
      * @return \Inttegro\Broadcast\CreationDetail Broadcast summary

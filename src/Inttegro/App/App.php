@@ -88,12 +88,12 @@ final class App extends \Inttegro\DomainValue
     /**
      * Public capabilities currently available to this app.
      *
-     * Required response field. PHP type: `array<string, mixed>`; wire field: `capabilities`
-     * (`object`).
+     * Required response field. PHP type: `CapabilityProjection`; wire field: `capabilities`
+     * (`object`). Known payment and payout capabilities are exposed as typed values.
      *
-     * @var array<string, mixed>
+     * @var CapabilityProjection
      */
-    public readonly array $capabilities;
+    public readonly CapabilityProjection $capabilities;
 
     /**
      * Active children policy assigned to this app for authorized private-beta callers.
@@ -146,7 +146,11 @@ final class App extends \Inttegro\DomainValue
         $this->createdAt = \Inttegro\ValueHydrator::dateTime($data['created_at'] ?? null, false);
         $this->updatedAt = \Inttegro\ValueHydrator::dateTime($data['updated_at'] ?? null, true);
         $this->archivedAt = \Inttegro\ValueHydrator::dateTime($data['archived_at'] ?? null, true);
-        $this->capabilities = \Inttegro\ValueHydrator::array($data['capabilities'] ?? null, false);
+        $this->capabilities = \Inttegro\ValueHydrator::object(
+            $data['capabilities'] ?? null,
+            [CapabilityProjection::class],
+            false,
+        );
         $this->childrenPolicy = \Inttegro\ValueHydrator::object(
             $data['children_policy'] ?? null,
             [\Inttegro\ChildrenPolicy\ChildrenPolicy::class],
