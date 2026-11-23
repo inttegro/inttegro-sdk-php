@@ -156,12 +156,12 @@ final class FinancialAccount extends \Inttegro\DomainValue
     /**
      * Verification value for this financial account.
      *
-     * Optional response field. PHP type: `array<string, mixed>|null`; wire field: `verification`
+     * Optional response field. PHP type: `Verification|null`; wire field: `verification`
      * (`object`).
      *
-     * @var array<string, mixed>|null
+     * @var Verification|null
      */
-    public readonly ?array $verification;
+    public readonly ?Verification $verification;
 
     /**
      * Bank Account value for this financial account.
@@ -187,11 +187,11 @@ final class FinancialAccount extends \Inttegro\DomainValue
     /**
      * Dosh Account value for this financial account.
      *
-     * Optional response field. PHP type: `array<mixed>|null`; wire field: `dosh_account` (`array`).
+     * Optional response field. PHP type: `DoshAccount|null`; wire field: `dosh_account` (`object`).
      *
-     * @var array<mixed>|null
+     * @var DoshAccount|null
      */
-    public readonly ?array $doshAccount;
+    public readonly ?DoshAccount $doshAccount;
 
     /**
      * Owner value for this financial account.
@@ -236,10 +236,10 @@ final class FinancialAccount extends \Inttegro\DomainValue
         $this->reference = \Inttegro\ValueHydrator::string($data['reference'] ?? null, true);
         $this->supplied = \Inttegro\ValueHydrator::object($data['supplied'] ?? null, [\Inttegro\Shared\ResourceSupply::class], true);
         $this->type = \Inttegro\ValueHydrator::string($data['type'] ?? null, false);
-        $this->verification = \Inttegro\ValueHydrator::array($data['verification'] ?? null, true);
+        $this->verification = \Inttegro\ValueHydrator::object($data['verification'] ?? null, [Verification::class], true);
         $this->bankAccount = \Inttegro\ValueHydrator::object($data['bank_account'] ?? null, [\Inttegro\BankAccount\BankAccount::class], true);
         $this->disconnectedAt = \Inttegro\ValueHydrator::dateTime($data['disconnected_at'] ?? null, true);
-        $this->doshAccount = \Inttegro\ValueHydrator::array($data['dosh_account'] ?? null, true);
+        $this->doshAccount = \Inttegro\ValueHydrator::object($data['dosh_account'] ?? null, [DoshAccount::class], true);
         $this->owner = \Inttegro\ValueHydrator::object($data['owner'] ?? null, [\Inttegro\BankAccount\Owner::class], true);
         $this->wallet = \Inttegro\ValueHydrator::object($data['wallet'] ?? null, [\Inttegro\Wallet\Wallet::class], true);
     }

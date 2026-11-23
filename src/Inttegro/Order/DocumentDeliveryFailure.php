@@ -24,15 +24,6 @@ final class DocumentDeliveryFailure extends \Inttegro\DomainValue
     public readonly ?string $channel;
 
     /**
-     * Provider or Chime error for this channel.
-     *
-     * Optional response field. PHP type: `string|null`; wire field: `error` (`string`).
-     *
-     * @var string|null
-     */
-    public readonly ?string $error;
-
-    /**
      * Hydrates a DocumentDeliveryFailure from decoded Inttegro API data.
      *
      * @param array<string, mixed> $data Wire object keyed by `snake_case` API field names.
@@ -40,7 +31,6 @@ final class DocumentDeliveryFailure extends \Inttegro\DomainValue
     public function __construct(array $data)
     {
         $this->channel = \Inttegro\ValueHydrator::string($data['channel'] ?? null, true);
-        $this->error = \Inttegro\ValueHydrator::string($data['error'] ?? null, true);
     }
 
     /**

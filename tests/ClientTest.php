@@ -760,7 +760,10 @@ final class ClientTest extends TestCase
         $client->paymentMethods->confirmVerification(['payment_method_id' => 'pm_1', 'token' => '123456']);
         $client->paymentMethods->lookup('pm_1');
         $client->paymentMethods->page(['customer_id' => 'cu_1']);
-        $client->paymentMethods->update(['payment_method_id' => 'pm_1', 'active' => true]);
+        $client->paymentMethods->update(new \Inttegro\PaymentMethod\UpdateRequest(
+            paymentMethodId: 'pm_1',
+            active: true,
+        ));
         $client->paymentMethods->activate('pm_1');
         $client->paymentMethods->disactivate('pm_1');
         $client->paymentMethods->archive('pm_1');

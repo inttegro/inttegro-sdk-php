@@ -114,6 +114,16 @@ class Chimes
     }
 
     /**
+     * Retrieve the effective, non-secret delivery settings used by Chimes.
+     *
+     * @return \Inttegro\Chime\Settings Typed SMS and email defaults.
+     */
+    public function settings(): \Inttegro\Chime\Settings
+    {
+        return $this->http->postResource('/chimes/settings', \Inttegro\Chime\Settings::class, 'settings', []);
+    }
+
+    /**
      * Schedule a notification to be sent at a future time.
      *
      * Creates a chime that will be sent automatically at the specified timestamp. Use scheduled
@@ -160,7 +170,6 @@ class Chimes
      *   - service_name: string - Service initiating the broadcast (required)
      *   - sender: string - Sender identifier (optional)
      *   - purpose: string - Purpose of this broadcast (optional)
-     *   - preferred_gateway: string - Preferred delivery gateway (optional)
      *   - request_meta: array - Request controls such as idempotency_key (optional)
      *
      * @return \Inttegro\Broadcast\CreationDetail Broadcast summary
